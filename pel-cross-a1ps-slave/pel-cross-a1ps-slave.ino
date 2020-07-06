@@ -7,13 +7,13 @@
 
 RF24 radio(9, 10); // CE, CSN
 
-const int button = 2;
-const int ledButton =  3;
-const int speaker = 5;
+const int button = 5;
+const int ledButton =  6;
+const int speaker = 7;
 
-const int alamatSatu = 6;
-const int alamatDua = 7;
-const int switchMinMax = 8;
+const int alamatSatu = 2;
+const int alamatDua = 3;
+const int switchMinMax = 4;
 
 const int pedRed = A0;
 const int pedGreen = A1;

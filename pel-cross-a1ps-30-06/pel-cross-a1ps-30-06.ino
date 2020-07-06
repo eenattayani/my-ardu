@@ -435,9 +435,9 @@ void tampilMenu()
 {
   lcd.clear();
   lcd.setCursor(0,0);
-  lcd.print("1.pelican");
+  lcd.print("1.PELICAN");
   lcd.setCursor(0,1);
-  lcd.print("2.tunggu  3.jeda");
+  lcd.print("2.TUNGGU  3.JEDA");
 }
 
 void masukMenu(String namaMenu = "menu") 
@@ -693,6 +693,3 @@ int terimaData()
 
   return dataMasuk[0];
 }
-
-
-

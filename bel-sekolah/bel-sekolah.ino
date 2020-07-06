@@ -423,7 +423,7 @@ void set_jadwal_rutin()
   menu = "set jadwal rutin";
   masuk_menu();
 
-  lcd.print("<RUTIN> jam ke:");
+  lcd.print("Jam ke  || nada");
   lcd.setCursor(0,1);
   lcd.print(jam_ke);
   lcd.print(" ");
@@ -515,7 +515,6 @@ void set_jadwal_rutin()
     }
   } while (keluar == false);
   keluar = false;
- 
 }
 
 void set_jam_ke(int jam_ke)
