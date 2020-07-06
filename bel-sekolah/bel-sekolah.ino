@@ -13,15 +13,18 @@
 //address EEPROM 0 - 1023
 const byte addrVolume = 0;
 const byte addrTrack = 1;
-const byte addrJumat = 30;
-const byte addrPuasa = 50;
-const byte addrUjian = 70;
+
 const byte addrJamRutin = 100;
 const byte addrMenitRutin = 120;
+const byte addrTrackRutin = 10;
+
 const byte addrJamRutinSenin = 140;
 const byte addrMenitRutinSenin = 160;
+const byte addrTrackRutinSenin = 30;
+
 const byte addrJamRutinJumat = 180;
 const byte addrMenitRutinJumat = 200;
+const byte addrTrackRutinJumat = 50;
 
 // const int addrJamRutin[] = {10,11,12,13,14,15,16,17,18,19,20,21};
 
@@ -625,6 +628,12 @@ void set_jam_ke(int jam_ke, int addr_jam, int addr_menit)
     if ( tombol != NO_KEY ) {
       counter  = 0;
       switch (tombol) {
+        case '3':
+          
+        break;
+        case '6':
+          
+        break;
         case '7':
           jam_edit += 1;
           if ( jam_edit > 23 ) { jam_edit = 0; }
