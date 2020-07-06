@@ -8,20 +8,20 @@
 #include <SoftwareSerial.h>
 #include <DFPlayer_Mini_Mp3.h>
 
-#define jumlah_jadwal 15
+#define jumlah_jadwal 20
 
 //address EEPROM 0 - 1023
-#define addrVolume 0 
-#define addrTrack 1
-#define addrJumat 30
-#define addrPuasa 50
-#define addrUjian 70
-#define addrJamRutin 100
-#define addrMenitRutin 120
-#define addrJamRutinSenin 140
-#define addrMenitRutinSenin 160
-#define addrJamRutinJumat 180
-#define addrMenitRutinJumat 200
+const byte addrVolume = 0;
+const byte addrTrack = 1;
+const byte addrJumat = 30;
+const byte addrPuasa = 50;
+const byte addrUjian = 70;
+const byte addrJamRutin = 100;
+const byte addrMenitRutin = 120;
+const byte addrJamRutinSenin = 140;
+const byte addrMenitRutinSenin = 160;
+const byte addrJamRutinJumat = 180;
+const byte addrMenitRutinJumat = 200;
 
 // const int addrJamRutin[] = {10,11,12,13,14,15,16,17,18,19,20,21};
 
@@ -57,7 +57,7 @@ unsigned long int currentMillis;
 const int jeda = 1000;
 const byte autoOut = 60;
 bool keluar = false;
-String menu = "";
+// String menu = "";
 String mode = "";
 String jam_pelajaran = "";
 String status_jadwal = "B";
@@ -68,26 +68,43 @@ char hold_tombol;
 
 
 
-int jam_rutin[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
-int menit_rutin[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
-int jam_senin[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
-int menit_senin[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
-int jam_jumat[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,    0,    0,    0,   0};
-int menit_jumat[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
+byte jam_rutin[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
+byte menit_rutin[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
 
-int jam_jadwal[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
-int menit_jadwal[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
-int nada[] =         { 1,   5,    5,   4,   1,   5,   5,    4,    1,    5,   8};
+byte jam_senin[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
+byte menit_senin[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
+
+byte jam_jumat[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,    0,    0,    0,   0};
+byte menit_jumat[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
+
+byte jam_jadwal[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
+byte menit_jadwal[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
+byte nada[] =         { 1,   5,    5,   4,   1,   5,   5,    4,    1,    5,   8};
 String jam_ke[] =    {"I","II","III","IV","V","VI","VII","VIII","IX", "X", "XI"};
-int arraySize = sizeof(jam_jadwal) / sizeof(jam_jadwal[0]);
+byte arraySize = sizeof(jam_jadwal) / sizeof(jam_jadwal[0]);
 
-int volume = EEPROM.read(addrVolume);
-int track = EEPROM.read(addrTrack);
+byte volume = EEPROM.read(addrVolume);
+byte track = EEPROM.read(addrTrack);
 
 
 void setup()
 {
   Serial.begin(9600);
+  while (!Serial)
+  {
+    /* code */
+  }
+  
+  for ( int i = 0; i < 20; i++  ){
+    jam_rutin[i] = EEPROM.read(addrJamRutin + 1 + i);
+    menit_rutin[i] = EEPROM.read(addrMenitRutin + 1 + i);
+
+    Serial.print(jam_rutin[i]);
+    Serial.print(":");
+    Serial.println(menit_rutin[i]);
+  }
+
+
   
   mySerial.begin(9600);
   mp3_set_serial(mySerial);
@@ -146,8 +163,7 @@ void loop()
 //============================================================
 void tes_sound()
 {
-  menu = "Tes Suara";
-  masuk_menu();
+  masuk_menu("Tes Suara");
 
   lcd.print("1.prev  2.next");
   lcd.setCursor(0,1);
@@ -274,8 +290,7 @@ void atur_volume(char tombol)
 
 void pengaturan()
 {
-  menu = "pengaturan";
-  masuk_menu();
+  masuk_menu("PENGATURAN");
 
   lcd.print("1.waktu  2.hari");
   lcd.setCursor(0,1);
@@ -302,7 +317,7 @@ void pengaturan()
           keluar = true;
         break;
         case '4':
-          set_jadwal_rutin();
+          set_jadwal();
           keluar = true;
         break;
         case '9':
@@ -322,8 +337,7 @@ void pengaturan()
 
 void pilihan()
 {
-  menu = "menu mode bel";
-  masuk_menu();
+  masuk_menu("MODE BEL");
 
   lcd.print("1.manual 2.rutin");
   lcd.setCursor(0,1);
@@ -410,8 +424,114 @@ void kembali()
 
 void set_manual()
 {
-  menu = "set mode manual";
-  masuk_menu();
+  masuk_menu("Set Mode Manual");
+}
+
+void set_jadwal()
+{
+  view_set_jadwal();
+
+  do {
+    start_counter();
+
+    char tombol = keypad.getKey();
+    if ( tombol != NO_KEY ) {
+      counter  = 0;
+      switch (tombol) {
+        case '1':
+          set_jadwal_rutin();
+          
+         view_set_jadwal();
+        break;
+        case '2':
+          set_jadwal_senin();
+
+          view_set_jadwal();
+        break;
+        case '3':
+        
+        break;
+        case '4':
+          
+        break;
+        case '9':
+          kembali();
+        break;
+        case '#':
+          kembali();
+        break;  
+        default:
+
+        break;
+      }
+    }
+  } while (keluar == false);
+  keluar = false;
+}
+
+void set_jadwal_senin()
+{
+  int jam_ke = 1;
+  int jam_edit = EEPROM.read(addrJamRutinSenin + jam_ke);
+  int menit_edit = EEPROM.read(addrMenitRutinSenin + jam_ke);
+
+  masuk_menu("Set Jadwal Senin");
+
+  view_set_rutin(jam_ke, jam_edit, menit_edit);
+
+  do {
+    start_counter();
+
+    char tombol = keypad.getKey();
+    if ( tombol != NO_KEY ) {
+      counter  = 0;
+      switch (tombol) {
+        case '3':
+          jam_ke += 1;
+          if ( jam_ke > 20 ) { jam_ke = 1; }
+
+          jam_edit = EEPROM.read(addrJamRutinSenin + jam_ke);
+          menit_edit = EEPROM.read(addrMenitRutinSenin + jam_ke);
+
+          view_set_rutin(jam_ke, jam_edit, menit_edit);
+
+        break;
+        case '6':
+          jam_ke -= 1;
+          if ( jam_ke < 1 ) { jam_ke = 20; }
+
+          jam_edit = EEPROM.read(addrJamRutinSenin + jam_ke);
+          menit_edit = EEPROM.read(addrMenitRutinSenin + jam_ke);
+          
+          view_set_rutin(jam_ke, jam_edit, menit_edit);
+
+        break;
+        case '8':
+         
+        break;
+        case '0':
+          
+        break;
+        case '9':
+          kembali();
+
+        break;
+        case '#':
+          set_jam_ke(jam_ke, addrJamRutinSenin, addrMenitRutinSenin);
+
+          jam_edit = EEPROM.read(addrJamRutinSenin + jam_ke);
+          menit_edit = EEPROM.read(addrMenitRutinSenin + jam_ke);
+
+          view_set_rutin(jam_ke, jam_edit, menit_edit);
+
+        break;  
+        default:
+
+        break;
+      }
+    }
+  } while (keluar == false);
+  keluar = false;
 }
 
 void set_jadwal_rutin()
@@ -420,20 +540,9 @@ void set_jadwal_rutin()
   int jam_edit = EEPROM.read(addrJamRutin + jam_ke);
   int menit_edit = EEPROM.read(addrMenitRutin + jam_ke);
 
-  menu = "set jadwal rutin";
-  masuk_menu();
+  masuk_menu("Set Jadwal Rutin");
 
-  lcd.print("Jam ke  || nada");
-  lcd.setCursor(0,1);
-  lcd.print(jam_ke);
-  lcd.print(" ");
-  lcd.setCursor(3,1);
-  lcd.print("-> ");
-  if ( jam_edit < 10 ) { lcd.print("0"); }
-  lcd.print(jam_edit);
-  lcd.print(":");
-  if ( menit_edit < 10 ) { lcd.print("0"); }
-  lcd.print(menit_edit);
+  view_set_rutin(jam_ke, jam_edit, menit_edit);
 
   do {
     start_counter();
@@ -449,15 +558,8 @@ void set_jadwal_rutin()
           jam_edit = EEPROM.read(addrJamRutin + jam_ke);
           menit_edit = EEPROM.read(addrMenitRutin + jam_ke);
 
-          lcd.setCursor(0,1);
-          lcd.print(jam_ke);
-          lcd.print(" ");
-          lcd.setCursor(6,1);
-          if ( jam_edit < 10 ) { lcd.print("0"); }
-          lcd.print(jam_edit);
-          lcd.setCursor(9,1);
-          if ( menit_edit < 10 ) { lcd.print("0"); }
-          lcd.print(menit_edit);
+          view_set_rutin(jam_ke, jam_edit, menit_edit);
+
         break;
         case '6':
           jam_ke -= 1;
@@ -466,15 +568,8 @@ void set_jadwal_rutin()
           jam_edit = EEPROM.read(addrJamRutin + jam_ke);
           menit_edit = EEPROM.read(addrMenitRutin + jam_ke);
           
-          lcd.setCursor(0,1);
-          lcd.print(jam_ke);
-          lcd.print(" ");
-          lcd.setCursor(6,1);
-          if ( jam_edit < 10 ) { lcd.print("0"); }
-          lcd.print(jam_edit);
-          lcd.setCursor(9,1);
-          if ( menit_edit < 10 ) { lcd.print("0"); }
-          lcd.print(menit_edit);
+          view_set_rutin(jam_ke, jam_edit, menit_edit);
+
         break;
         case '8':
          
@@ -487,25 +582,12 @@ void set_jadwal_rutin()
 
         break;
         case '#':
-          set_jam_ke(jam_ke);
+          set_jam_ke(jam_ke, addrJamRutin, addrMenitRutin);
 
           jam_edit = EEPROM.read(addrJamRutin + jam_ke);
           menit_edit = EEPROM.read(addrMenitRutin + jam_ke);
 
-          menu = "set jadwal rutin";
-          masuk_menu();
-
-          lcd.print("<RUTIN> jam ke:");
-          lcd.setCursor(0,1);
-          lcd.print(jam_ke);
-          lcd.print(" ");
-          lcd.setCursor(3,1);
-          lcd.print("-> ");
-          if ( jam_edit < 10 ) { lcd.print("0"); }
-          lcd.print(jam_edit);
-          lcd.print(":");
-          if ( menit_edit < 10 ) { lcd.print("0"); }
-          lcd.print(menit_edit);
+          view_set_rutin(jam_ke, jam_edit, menit_edit);
 
         break;  
         default:
@@ -517,22 +599,22 @@ void set_jadwal_rutin()
   keluar = false;
 }
 
-void set_jam_ke(int jam_ke)
+
+void set_jam_ke(int jam_ke, int addr_jam, int addr_menit)
 {
-  int jam_edit = EEPROM.read(addrJamRutin + jam_ke);
-  int menit_edit = EEPROM.read(addrMenitRutin + jam_ke);
+  int jam_edit = EEPROM.read(addr_jam + jam_ke);
+  int menit_edit = EEPROM.read(addr_menit + jam_ke);
 
   lcd.clear();
-  lcd.print("Atur jam ke:");
-  lcd.setCursor(0,1);
+  lcd.print("Jam ke: ");
   lcd.print(jam_ke);
-  lcd.setCursor(3,1);
-  lcd.print("-> ");
+  lcd.print(" -> ");
   if ( jam_edit < 10 ) { lcd.print("0"); }
   lcd.print(jam_edit);
   lcd.print(":");
   if ( menit_edit < 10 ) { lcd.print("0"); }
   lcd.print(menit_edit);
+  lcd.print(" ");
 
   do {
     start_counter();
@@ -573,8 +655,8 @@ void set_jam_ke(int jam_ke)
           kembali();
         break;
         case '#':
-          EEPROM.update(addrJamRutin + jam_ke, jam_edit);
-          EEPROM.update(addrMenitRutin + jam_ke, menit_edit);
+          EEPROM.update(addr_jam + jam_ke, jam_edit);
+          EEPROM.update(addr_menit + jam_ke, menit_edit);
           simpan();
         break;  
         default:
@@ -644,6 +726,17 @@ void tampil_waktu()
 
 void tampil_status()
 {
+  if ( nama_hari[hari] == "SENIN" ) {
+    for ( int i = 0; i < 20; i++  ){
+      jam_jadwal[i] = jam_senin[i];
+      menit_jadwal[i] = menit_senin[i];
+
+      Serial.print(jam_jadwal[i]);
+      Serial.print(":");
+      Serial.println(menit_jadwal[i]);
+    }
+  }
+
   jam_pelajaran = "off";
 
   for (int i = 0; i < arraySize; i++) {
@@ -690,7 +783,7 @@ void start_counter()
   }
 }
 
-void masuk_menu()
+void masuk_menu(char menu[])
 {
   lcd.clear();
   lcd.print(menu);
@@ -700,8 +793,7 @@ void masuk_menu()
 
 void set_hari()
 {
-  menu = "menu set hari";
-  masuk_menu();
+  masuk_menu("Menu Set Hari");
 
   lcd.print("Hari: ");
   lcd.print(nama_hari[hari]);
@@ -748,8 +840,7 @@ void set_hari()
 
 void set_waktu()
 {
-  menu = "menu set jam";
-  masuk_menu();
+  masuk_menu("Menu Set Waktu");
   
   lcd.print("Date: ");
 
@@ -869,3 +960,36 @@ void set_waktu()
 
   keluar = false;
 }
+
+void view_set_jadwal()
+{
+  masuk_menu("SET JADWAL");
+
+  lcd.print("1.RUTIN 2.SENIN");
+  lcd.setCursor(0,1);
+  lcd.print("3.JUMAT 4.EKSTRA");
+  lcd.print("   ");
+}
+
+void view_set_rutin(int jam_ke, int jam_edit, int menit_edit)
+{
+
+  lcd.print("Jam ke-   # nada");
+
+  lcd.setCursor(7,0);
+  lcd.print(jam_ke);
+  lcd.print(" ");
+  lcd.setCursor(0,1);
+  if ( jam_edit < 10 ) { lcd.print("0"); }
+  lcd.print(jam_edit);
+  lcd.print(":");
+  if ( menit_edit < 10 ) { lcd.print("0"); }
+  lcd.print(menit_edit);
+  lcd.print(" ");
+
+  lcd.setCursor(10,1);
+  lcd.print("# ");
+  lcd.print(track);
+}
+
+
