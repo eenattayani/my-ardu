@@ -13,12 +13,17 @@
 //address EEPROM 0 - 1023
 #define addrVolume 0 
 #define addrTrack 1
-#define addrSenin 10
 #define addrJumat 30
 #define addrPuasa 50
 #define addrUjian 70
+#define addrJamRutin 100
+#define addrMenitRutin 120
+#define addrJamRutinSenin 140
+#define addrMenitRutinSenin 160
+#define addrJamRutinJumat 180
+#define addrMenitRutinJumat 200
 
-const int addrJamRutin[] = {10,11,12,13,14,15,16,17,18,19,20,21};
+// const int addrJamRutin[] = {10,11,12,13,14,15,16,17,18,19,20,21};
 
 
 LiquidCrystal_I2C lcd(0x3F, 16, 2); //0x27  0x3F
@@ -411,16 +416,17 @@ void set_manual()
 
 void set_jadwal_rutin()
 {
-  int jam_edit = EEPROM.read(100);
-  int menit_edit = EEPROM.read(101);
   int jam_ke = 1;
+  int jam_edit = EEPROM.read(addrJamRutin + jam_ke);
+  int menit_edit = EEPROM.read(addrMenitRutin + jam_ke);
 
   menu = "set jadwal rutin";
   masuk_menu();
 
-  lcd.print("Atur jam ke:");
+  lcd.print("<RUTIN> jam ke:");
   lcd.setCursor(0,1);
   lcd.print(jam_ke);
+  lcd.print(" ");
   lcd.setCursor(3,1);
   lcd.print("-> ");
   if ( jam_edit < 10 ) { lcd.print("0"); }
@@ -438,17 +444,37 @@ void set_jadwal_rutin()
       switch (tombol) {
         case '3':
           jam_ke += 1;
-          if ( jam_ke > 20 ) { jam_ke = 0; }
+          if ( jam_ke > 20 ) { jam_ke = 1; }
+
+          jam_edit = EEPROM.read(addrJamRutin + jam_ke);
+          menit_edit = EEPROM.read(addrMenitRutin + jam_ke);
+
           lcd.setCursor(0,1);
-          if ( jam_ke < 10 ) { lcd.print("0"); }
           lcd.print(jam_ke);
+          lcd.print(" ");
+          lcd.setCursor(6,1);
+          if ( jam_edit < 10 ) { lcd.print("0"); }
+          lcd.print(jam_edit);
+          lcd.setCursor(9,1);
+          if ( menit_edit < 10 ) { lcd.print("0"); }
+          lcd.print(menit_edit);
         break;
         case '6':
           jam_ke -= 1;
-          if ( jam_ke < 0 ) { jam_ke = 20; }
+          if ( jam_ke < 1 ) { jam_ke = 20; }
+
+          jam_edit = EEPROM.read(addrJamRutin + jam_ke);
+          menit_edit = EEPROM.read(addrMenitRutin + jam_ke);
+          
           lcd.setCursor(0,1);
-          if ( jam_ke < 10 ) { lcd.print("0"); }
           lcd.print(jam_ke);
+          lcd.print(" ");
+          lcd.setCursor(6,1);
+          if ( jam_edit < 10 ) { lcd.print("0"); }
+          lcd.print(jam_edit);
+          lcd.setCursor(9,1);
+          if ( menit_edit < 10 ) { lcd.print("0"); }
+          lcd.print(menit_edit);
         break;
         case '8':
          
@@ -458,12 +484,21 @@ void set_jadwal_rutin()
         break;
         case '9':
           kembali();
+
         break;
         case '#':
           set_jam_ke(jam_ke);
-          lcd.print("Atur jam ke:");
+
+          jam_edit = EEPROM.read(addrJamRutin + jam_ke);
+          menit_edit = EEPROM.read(addrMenitRutin + jam_ke);
+
+          menu = "set jadwal rutin";
+          masuk_menu();
+
+          lcd.print("<RUTIN> jam ke:");
           lcd.setCursor(0,1);
           lcd.print(jam_ke);
+          lcd.print(" ");
           lcd.setCursor(3,1);
           lcd.print("-> ");
           if ( jam_edit < 10 ) { lcd.print("0"); }
@@ -471,6 +506,7 @@ void set_jadwal_rutin()
           lcd.print(":");
           if ( menit_edit < 10 ) { lcd.print("0"); }
           lcd.print(menit_edit);
+
         break;  
         default:
 
@@ -484,8 +520,8 @@ void set_jadwal_rutin()
 
 void set_jam_ke(int jam_ke)
 {
-  int jam_edit = EEPROM.read(100);
-  int menit_edit = EEPROM.read(101);
+  int jam_edit = EEPROM.read(addrJamRutin + jam_ke);
+  int menit_edit = EEPROM.read(addrMenitRutin + jam_ke);
 
   lcd.clear();
   lcd.print("Atur jam ke:");
@@ -538,8 +574,8 @@ void set_jam_ke(int jam_ke)
           kembali();
         break;
         case '#':
-          EEPROM.update(100, jam_edit);
-          EEPROM.update(101, menit_edit);
+          EEPROM.update(addrJamRutin + jam_ke, jam_edit);
+          EEPROM.update(addrMenitRutin + jam_ke, menit_edit);
           simpan();
         break;  
         default:
