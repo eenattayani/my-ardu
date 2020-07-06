@@ -8,9 +8,15 @@
 #include <SoftwareSerial.h>
 #include <DFPlayer_Mini_Mp3.h>
 
+#define jumlah_jadwal 15
+
 //address EEPROM 0 - 1023
 #define addrVolume 0 
 #define addrTrack 1
+#define addrSenin 10
+#define addrJumat 30
+#define addrPuasa 50
+#define addrUjian 70
 
 const int addrJamRutin[] = {10,11,12,13,14,15,16,17,18,19,20,21};
 
@@ -43,7 +49,8 @@ int hari,tanggal, bulan, tahun, jam, menit, detik;
 
 unsigned long int previousMillis = millis(); 
 unsigned long int currentMillis;
-int jeda = 1000;
+const int jeda = 1000;
+const byte autoOut = 60;
 bool keluar = false;
 String menu = "";
 String mode = "";
@@ -54,15 +61,17 @@ String data_jam_pelajaran[] = {};
 byte counter = 0;
 char hold_tombol;
 
-int jam_rutin[] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
-int menit_rutin[] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
-int jam_senin[] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
-int menit_senin[] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
-int jam_jumat[] =   { 7,   7,    8,   9,   9,  10,  11,    0,    0,    0,   0};
-int menit_jumat[] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
 
-int jam_jadwal[] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
-int menit_jadwal[] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
+
+int jam_rutin[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
+int menit_rutin[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
+int jam_senin[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
+int menit_senin[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
+int jam_jumat[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,    0,    0,    0,   0};
+int menit_jumat[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
+
+int jam_jadwal[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
+int menit_jadwal[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
 int nada[] =         { 1,   5,    5,   4,   1,   5,   5,    4,    1,    5,   8};
 String jam_ke[] =    {"I","II","III","IV","V","VI","VII","VIII","IX", "X", "XI"};
 int arraySize = sizeof(jam_jadwal) / sizeof(jam_jadwal[0]);
@@ -73,7 +82,7 @@ int track = EEPROM.read(addrTrack);
 
 void setup()
 {
-  // Serial.begin(9600);
+  Serial.begin(9600);
   
   mySerial.begin(9600);
   mp3_set_serial(mySerial);
@@ -402,8 +411,144 @@ void set_manual()
 
 void set_jadwal_rutin()
 {
+  int jam_edit = EEPROM.read(100);
+  int menit_edit = EEPROM.read(101);
+  int jam_ke = 1;
+
   menu = "set jadwal rutin";
   masuk_menu();
+
+  lcd.print("Atur jam ke:");
+  lcd.setCursor(0,1);
+  lcd.print(jam_ke);
+  lcd.setCursor(3,1);
+  lcd.print("-> ");
+  if ( jam_edit < 10 ) { lcd.print("0"); }
+  lcd.print(jam_edit);
+  lcd.print(":");
+  if ( menit_edit < 10 ) { lcd.print("0"); }
+  lcd.print(menit_edit);
+
+  do {
+    start_counter();
+
+    char tombol = keypad.getKey();
+    if ( tombol != NO_KEY ) {
+      counter  = 0;
+      switch (tombol) {
+        case '3':
+          jam_ke += 1;
+          if ( jam_ke > 20 ) { jam_ke = 0; }
+          lcd.setCursor(0,1);
+          if ( jam_ke < 10 ) { lcd.print("0"); }
+          lcd.print(jam_ke);
+        break;
+        case '6':
+          jam_ke -= 1;
+          if ( jam_ke < 0 ) { jam_ke = 20; }
+          lcd.setCursor(0,1);
+          if ( jam_ke < 10 ) { lcd.print("0"); }
+          lcd.print(jam_ke);
+        break;
+        case '8':
+         
+        break;
+        case '0':
+          
+        break;
+        case '9':
+          kembali();
+        break;
+        case '#':
+          set_jam_ke(jam_ke);
+          lcd.print("Atur jam ke:");
+          lcd.setCursor(0,1);
+          lcd.print(jam_ke);
+          lcd.setCursor(3,1);
+          lcd.print("-> ");
+          if ( jam_edit < 10 ) { lcd.print("0"); }
+          lcd.print(jam_edit);
+          lcd.print(":");
+          if ( menit_edit < 10 ) { lcd.print("0"); }
+          lcd.print(menit_edit);
+        break;  
+        default:
+
+        break;
+      }
+    }
+  } while (keluar == false);
+  keluar = false;
+ 
+}
+
+void set_jam_ke(int jam_ke)
+{
+  int jam_edit = EEPROM.read(100);
+  int menit_edit = EEPROM.read(101);
+
+  lcd.clear();
+  lcd.print("Atur jam ke:");
+  lcd.setCursor(0,1);
+  lcd.print(jam_ke);
+  lcd.setCursor(3,1);
+  lcd.print("-> ");
+  if ( jam_edit < 10 ) { lcd.print("0"); }
+  lcd.print(jam_edit);
+  lcd.print(":");
+  if ( menit_edit < 10 ) { lcd.print("0"); }
+  lcd.print(menit_edit);
+
+  do {
+    start_counter();
+
+    char tombol = keypad.getKey();
+    if ( tombol != NO_KEY ) {
+      counter  = 0;
+      switch (tombol) {
+        case '7':
+          jam_edit += 1;
+          if ( jam_edit > 23 ) { jam_edit = 0; }
+          lcd.setCursor(6,1);
+          if ( jam_edit < 10 ) { lcd.print("0"); }
+          lcd.print(jam_edit);
+        break;
+        case '*':
+          jam_edit -= 1;
+          if ( jam_edit < 0 ) { jam_edit = 23; }
+          lcd.setCursor(6,1);
+          if ( jam_edit < 10 ) { lcd.print("0"); }
+          lcd.print(jam_edit);
+        break;
+        case '8':
+          menit_edit += 1;
+          if ( menit_edit > 59 ) { menit_edit = 0; }
+          lcd.setCursor(9,1);
+          if ( menit_edit < 10 ) { lcd.print("0"); }
+          lcd.print(menit_edit);
+        break;
+        case '0':
+          menit_edit -= 1;
+          if ( menit_edit < 0 ) { menit_edit = 59; }
+          lcd.setCursor(9,1);
+          if ( menit_edit < 10 ) { lcd.print("0"); }
+          lcd.print(menit_edit);
+        break;
+        case '9':
+          kembali();
+        break;
+        case '#':
+          EEPROM.update(100, jam_edit);
+          EEPROM.update(101, menit_edit);
+          simpan();
+        break;  
+        default:
+
+        break;
+      }
+    }
+  } while (keluar == false);
+  keluar = false;
 }
 
 void baca_waktu()
@@ -501,8 +646,9 @@ void start_counter()
   if ( currentMillis - previousMillis > jeda ) {
     previousMillis = currentMillis;
     counter += 1;
+    Serial.println(counter);
     
-    if (counter > 60) {
+    if (counter > autoOut) {
       counter = 0;
       keluar = true;
     }
