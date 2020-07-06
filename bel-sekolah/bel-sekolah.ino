@@ -429,7 +429,7 @@ void set_manual()
 
 void set_jadwal()
 {
-  view_set_jadwal();
+  menu_set_jadwal();
 
   do {
     start_counter();
@@ -441,12 +441,12 @@ void set_jadwal()
         case '1':
           set_jadwal_rutin();
           
-         view_set_jadwal();
+         menu_set_jadwal();
         break;
         case '2':
           set_jadwal_senin();
 
-          view_set_jadwal();
+          menu_set_jadwal();
         break;
         case '3':
         
@@ -606,14 +606,16 @@ void set_jam_ke(int jam_ke, int addr_jam, int addr_menit)
   int menit_edit = EEPROM.read(addr_menit + jam_ke);
 
   lcd.clear();
-  lcd.print("Jam ke: ");
-  lcd.print(jam_ke);
-  lcd.print(" -> ");
+  lcd.print("Waktu: ");
   if ( jam_edit < 10 ) { lcd.print("0"); }
   lcd.print(jam_edit);
   lcd.print(":");
   if ( menit_edit < 10 ) { lcd.print("0"); }
   lcd.print(menit_edit);
+  lcd.print(" ");
+  lcd.setCursor(0,1);
+  lcd.print("nada : ");
+  lcd.print(track);
   lcd.print(" ");
 
   do {
@@ -626,28 +628,28 @@ void set_jam_ke(int jam_ke, int addr_jam, int addr_menit)
         case '7':
           jam_edit += 1;
           if ( jam_edit > 23 ) { jam_edit = 0; }
-          lcd.setCursor(6,1);
+          lcd.setCursor(7,0);
           if ( jam_edit < 10 ) { lcd.print("0"); }
           lcd.print(jam_edit);
         break;
         case '*':
           jam_edit -= 1;
           if ( jam_edit < 0 ) { jam_edit = 23; }
-          lcd.setCursor(6,1);
+          lcd.setCursor(7,0);
           if ( jam_edit < 10 ) { lcd.print("0"); }
           lcd.print(jam_edit);
         break;
         case '8':
           menit_edit += 1;
           if ( menit_edit > 59 ) { menit_edit = 0; }
-          lcd.setCursor(9,1);
+          lcd.setCursor(10,0);
           if ( menit_edit < 10 ) { lcd.print("0"); }
           lcd.print(menit_edit);
         break;
         case '0':
           menit_edit -= 1;
           if ( menit_edit < 0 ) { menit_edit = 59; }
-          lcd.setCursor(9,1);
+          lcd.setCursor(10,0);
           if ( menit_edit < 10 ) { lcd.print("0"); }
           lcd.print(menit_edit);
         break;
@@ -961,7 +963,7 @@ void set_waktu()
   keluar = false;
 }
 
-void view_set_jadwal()
+void menu_set_jadwal()
 {
   masuk_menu("SET JADWAL");
 
@@ -973,7 +975,7 @@ void view_set_jadwal()
 
 void view_set_rutin(int jam_ke, int jam_edit, int menit_edit)
 {
-
+  lcd.clear();
   lcd.print("Jam ke-   # nada");
 
   lcd.setCursor(7,0);
