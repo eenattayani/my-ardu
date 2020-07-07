@@ -244,6 +244,7 @@ void tombol_ditekan()
         digitalWrite(carYellow, LOW);
         digitalWrite(carGreen, HIGH);
 
+        digitalWrite(pedRed, HIGH);
         digitalWrite(pedGreen, LOW);
       break;
       case 14 :
@@ -270,6 +271,7 @@ void tombol_ditekan()
         digitalWrite(pedRed, LOW);
         digitalWrite(pedGreen, HIGH);
 
+        digitalWrite(carRed, HIGH);
         digitalWrite(carGreen, LOW);
       break;
       default:
