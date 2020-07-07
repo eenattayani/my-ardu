@@ -28,7 +28,9 @@ bool buttonState = 0;
 bool minMaxState = MIN;
 bool ledState = 0; // status enable tombol penyebrangan
 
-const byte counterSinyalLost = 120;
+byte counterSinyalLost = 0;
+const byte batasSinyalLost = 60;
+
 
 unsigned int count = 0;
 unsigned long prevMillis = 0;
@@ -86,9 +88,9 @@ void loop() {
     tombol_ditekan();
   } 
 
-  if ( terima_data() == 100 ) {
+  if ( terima_data() != 0 && dataMasuk[0] != 1000 ) {
     tombolLED_on();
-    Serial.println("Tombol Ditekan");
+    Serial.println("perintah masuk");
     tombol_ditekan();
   }
 
@@ -177,8 +179,11 @@ void mode_receive()
 
 int terima_data()
 {
+
   dataMasuk[0] = 0;
   if (radio.available()) {
+
+    counterSinyalLost = 0;
     
     radio.read(dataMasuk, 2);
     
@@ -268,8 +273,28 @@ void tombol_ditekan()
         digitalWrite(carGreen, LOW);
       break;
       default:
+        curMillis = millis();
 
+        if ( curMillis - prevMillis > interval ) {
+          counterSinyalLost = counterSinyalLost + 1;
+          prevMillis = curMillis;
+          // Serial.print("counter sinyal lost: ");
+          // Serial.println(counterSinyalLost);
+
+          if ( counterSinyalLost > batasSinyalLost ) {
+            Serial.println("Semua Padam");
+      
+            digitalWrite(pedRed, LOW);
+            digitalWrite(pedGreen, LOW);
+            digitalWrite(carRed, LOW);
+            digitalWrite(carYellow, LOW);
+            digitalWrite(carGreen, LOW);
+            
+            tombolLED_off();
+          }
+        }
       break;
     }
+    
   } while ( ledState == 1 );
 } 

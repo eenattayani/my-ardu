@@ -273,9 +273,8 @@ void kuning_flashing(){
 void countdownAktif(){
   digitalWrite(carYellow,LOW);
   digitalWrite(carGreen,HIGH);
-  kirimData(13);
   digitalWrite(pedRed,HIGH);
-  kirimData(21);
+  kirimData(13);
 
   lcd.clear();
   lcd.setCursor(0,0);
@@ -291,6 +290,8 @@ void countdownAktif(){
       playNote(notes[1], 200);
       delay(tempo / 1);
       delay(500);
+
+      kirimData(13);
     }
 
     lcd.setCursor(0,1);
@@ -334,6 +335,8 @@ void changeLights(){
       delay(tempo / 1);
     playNote(notes[1], 200);
       delay(tempo / 1);
+
+   kirimData(23);
   }
   
   //flashing lampu hijau penyebrangan ; status = off
@@ -352,6 +355,8 @@ void changeLights(){
     // kirimData(20);
     playNote(notes[1], 100);
       delay(tempo / 0.5);
+
+    kirimData(23);
   }
 
   digitalWrite(pedGreen,LOW);
@@ -382,6 +387,8 @@ void changeLights(){
     lcd.print("       ");
     display.showNumberDec(x);
     delay(1000);
+
+    kirimData(13);
   }
   
 
