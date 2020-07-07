@@ -145,9 +145,13 @@ void setup() {
   
   display.setBrightness(0x0f);
 
+  modeTransmit();
+  delay(500);
+  kirimData(1000);
+  delay(500);  
+  
   modeReceive();
-
-  delay(2000);
+  delay(1000);
 
   lcd.clear();
   tampilanAwal();

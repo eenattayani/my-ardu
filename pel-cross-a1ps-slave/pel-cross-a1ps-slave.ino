@@ -8,11 +8,11 @@
 
 RF24 radio(9, 10); // CE, CSN
 
-const int button = 5;
+const int button = 2;
 const int ledButton =  6;
 const int speaker = 7;
 
-const int alamatSatu = 2;
+const int alamatSatu = 5;
 const int alamatDua = 3;
 const int switchMinMax = 4;
 
@@ -88,6 +88,7 @@ void loop() {
 
   if ( terima_data() == 100 ) {
     tombolLED_on();
+    Serial.println("Tombol Ditekan");
     tombol_ditekan();
   }
 
