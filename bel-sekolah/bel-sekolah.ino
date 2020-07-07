@@ -52,7 +52,7 @@ byte colPins[COLS] = {4,3,2,1};
 Keypad keypad = Keypad(makeKeymap(keys),rowPins,colPins,ROWS,COLS);
 
 String nama_hari[] = {"AHAD","SENIN","SELASA","RABU","KAMIS","JUMAT","SABTU"};
-String nama_bulan[] = {"Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"};
+// String nama_bulan[] = {"Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"};
 int hari,tanggal, bulan, tahun, jam, menit, detik;
 
 unsigned long int previousMillis = millis(); 
@@ -62,13 +62,12 @@ const byte autoOut = 60;
 bool keluar = false;
 // String menu = "";
 String mode = "";
-String jam_pelajaran = "";
+String jam_pelajaran = "OFF";
 String status_jadwal = "B";
 String tanda = "->";
 String data_jam_pelajaran[] = {};
 byte counter = 0;
 char hold_tombol;
-
 
 
 byte jam_rutin[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
@@ -83,7 +82,7 @@ byte menit_jumat[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0
 byte jam_jadwal[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
 byte menit_jadwal[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
 byte nada[] =         { 1,   5,    5,   4,   1,   5,   5,    4,    1,    5,   8};
-String jam_ke[] =    {"I","II","III","IV","V","VI","VII","VIII","IX", "X", "XI"};
+// String status_jam_ke[] =    {"I","II","III","IV","V","VI","VII","VIII","IX", "X", "XI" , "XII", "XIII", "XIV"};
 byte arraySize = sizeof(jam_jadwal) / sizeof(jam_jadwal[0]);
 
 byte volume = EEPROM.read(addrVolume);
@@ -98,6 +97,7 @@ void setup()
     /* code */
   }
   
+  // RUTIN
   for ( int i = 0; i < 20; i++  ){
     jam_rutin[i] = EEPROM.read(addrJamRutin + 1 + i);
     menit_rutin[i] = EEPROM.read(addrMenitRutin + 1 + i);
@@ -107,8 +107,32 @@ void setup()
     Serial.println(menit_rutin[i]);
   }
 
+  // SENIN
+  for ( int i = 0; i < 20; i++  ){
+    jam_senin[i] = EEPROM.read(addrJamRutinSenin + 1 + i);
+    menit_senin[i] = EEPROM.read(addrMenitRutinSenin + 1 + i);
 
-  
+    Serial.print(jam_senin[i]);
+    Serial.print(":");
+    Serial.println(menit_senin[i]);
+  }
+
+  // JUMAT
+  for ( int i = 0; i < 20; i++ ){
+    jam_jumat[i] = EEPROM.read(addrJamRutinJumat + 1 + i);
+    menit_jumat[i] = EEPROM.read(addrMenitRutinJumat + 1 + i);
+
+    Serial.print(jam_jumat[i]);
+    Serial.print(":");
+    Serial.println(menit_jumat[i]);
+  }
+
+  Serial.println(jam_pelajaran);
+  Serial.println(status_jadwal);
+  Serial.println(tanda);
+
+
+
   mySerial.begin(9600);
   mp3_set_serial(mySerial);
   delay(10);
@@ -741,32 +765,60 @@ void tampil_status()
     for ( int i = 0; i < 20; i++  ){
       jam_jadwal[i] = jam_senin[i];
       menit_jadwal[i] = menit_senin[i];
-
-      Serial.print(jam_jadwal[i]);
-      Serial.print(":");
-      Serial.println(menit_jadwal[i]);
+    }
+  } else {
+    for ( int i = 0; i < 20; i++  ){
+      jam_jadwal[i] = jam_rutin[i];
+      menit_jadwal[i] = menit_rutin[i];
     }
   }
 
-  jam_pelajaran = "off";
-
-  for (int i = 0; i < arraySize; i++) {
-    if ( jam < jam_jadwal[i] || jam <= jam_jadwal[i] && menit < menit_jadwal[i] ) {
-      tanda = "->";
-      jam_pelajaran = jam_ke[i];
-      break;
-    } else if ( jam == jam_jadwal[i] && menit == menit_jadwal[i] ) {
-      tanda = "=";
-      jam_pelajaran = jam_ke[i];
-      if ( detik < 1 ) mp3_play(nada[i]);
-      break;
-    }
-  }
-
+  jam_pelajaran = "OFF";
+  tanda = "->";
   lcd.setCursor(0,1);
   lcd.print(status_jadwal);
   lcd.print(tanda);
   lcd.print(jam_pelajaran);
+  lcd.print(" ");
+
+  for (int i = 0; i < arraySize; i++) {
+    if ( jam < jam_jadwal[i] || jam <= jam_jadwal[i] && menit < menit_jadwal[i] ) {
+      tanda = "->";
+      jam_pelajaran = i + 1;
+
+      view_status_jampel(i);
+
+      break;
+    } else if ( jam == jam_jadwal[i] && menit == menit_jadwal[i] ) {
+      tanda = "=";
+      jam_pelajaran = i + 1;
+      if ( detik < 1 ) mp3_play(nada[i]);
+
+      view_status_jampel(i);
+
+      break;
+    }
+  }
+
+}
+
+void view_status_jampel(int i)
+{
+  if ( counter % 2 == 0 ) {
+    lcd.setCursor(0,1);
+    lcd.print(status_jadwal);
+    lcd.print(tanda);
+    lcd.print(jam_pelajaran);
+    lcd.print(" ");
+  } else {
+    lcd.setCursor(0,1);
+    if ( jam_jadwal[i] < 10 ) { lcd.print("0"); }
+    lcd.print(jam_jadwal[i]);
+    lcd.print(":");
+    if ( menit_jadwal[i] < 10 ) { lcd.print("0"); }
+    lcd.print(menit_jadwal[i]);
+    lcd.print(" ");
+  }
 }
 
 void mulai() 

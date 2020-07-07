@@ -647,7 +647,7 @@ int menuPengaturanDurasi(int durasi)
     if ( tombol != NO_KEY ) {
       hitMillis = 0;
     }
-    
+     
   } while ( statusTombol != 1 );
 
   return durasi;
