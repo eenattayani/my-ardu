@@ -1,0 +1,6 @@
+{
+    "board": "arduino:avr:nano",
+    "configuration": "cpu=atmega168",
+    "port": "COM3",
+    "sketch": "pel-cross-a1ps-slave.ino"
+}

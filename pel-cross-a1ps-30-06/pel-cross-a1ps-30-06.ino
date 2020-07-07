@@ -332,7 +332,7 @@ void changeLights(){
       delay(tempo / 1);
   }
   
-  //flashing lampu hijau penyebrangan
+  //flashing lampu hijau penyebrangan ; status = off
   for ( int x = 5; x>=0; x-- ) {
     lcd.setCursor(0,1);
     lcd.print("       ");
@@ -685,7 +685,9 @@ int terimaData()
     radio.read(dataMasuk, 2);
 
     count += 1;
-    lcd.setCursor(12,3);
+    lcd.clear();
+    lcd.setCursor(2,3);
+    lcd.print("received: ");
     lcd.print(dataMasuk[0]);
     lcd.print(" ");
     lcd.print(count);

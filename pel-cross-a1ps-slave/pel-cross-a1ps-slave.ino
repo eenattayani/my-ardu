@@ -1,6 +1,7 @@
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
+#include <Wire.h>
 
 #define MIN 0
 #define MAX 1
@@ -25,7 +26,9 @@ byte address = 225;
 
 bool buttonState = 0; 
 bool minMaxState = MIN;
-bool ledState = 0;
+bool ledState = 0; // status enable tombol penyebrangan
+
+const byte counterSinyalLost = 120;
 
 unsigned int count = 0;
 unsigned long prevMillis = 0;
@@ -36,6 +39,12 @@ int kuning = 1;
 
 int sentMessage[1];
 int dataMasuk[1] = {0};
+
+//speaker
+int length = 2; // the number of notes
+char notes[] = "bg"; // a space represents a rest
+int beats[] = { 1, 1};
+int tempo = 100;
 
 void setup() {
   pinMode(button, INPUT);
@@ -63,96 +72,26 @@ void setup() {
 
 void loop() {
   buttonState = digitalRead(button);
-  if (buttonState == HIGH) {
-    digitalWrite(ledButton, HIGH);
-    ledState = 1;
+
+  if ( buttonState == HIGH ) {
+  
+    tombolLED_on();
     mode_transmit();
-    while (buttonState == HIGH) {
-      
-      kirim_data(1);
-      
-      delay(300);
-      buttonState = digitalRead(button);
-   }
-   mode_receive();
-  } else {
-    switch ( terima_data() ) {
-        case 100:
-          ledState = 1;
-          digitalWrite(ledButton, HIGH);
-          Serial.println("Tombol Ditekan");
-        break;
-        case 1000 :
-          Serial.println("Semua Padam");
-          
-          digitalWrite(pedRed, LOW);
-          digitalWrite(pedGreen, LOW);
-          digitalWrite(carRed, LOW);
-          digitalWrite(carYellow, LOW);
-          digitalWrite(carGreen, LOW);
-          
-          digitalWrite(ledButton, LOW);
-          ledState = 0;
-        break;
-        case 10 : 
-          Serial.println("Kendaraan Padam");
-          
-          digitalWrite(carRed, LOW);
-          digitalWrite(carYellow, LOW);
-          digitalWrite(carGreen, LOW);
-        break;
-        case 11 :
-          Serial.println("Kendaraan Merah");
-          
-          digitalWrite(carRed, HIGH);
-          digitalWrite(carYellow, LOW);
-          digitalWrite(carGreen, LOW);
-        break;
-        case 12 :
-          Serial.println("Kendaraan Kuning");
-          
-          digitalWrite(carRed, LOW);
-          digitalWrite(carYellow, HIGH);
-          digitalWrite(carGreen, LOW);
-        break;
-        case 13 :
-          Serial.println("Kendaraan Hijau");
 
-          digitalWrite(carRed, LOW);
-          digitalWrite(carYellow, LOW);
-          digitalWrite(carGreen, HIGH);
-        break;
-        case 14 :
-          Serial.println("Kendaraan Merah Kuning");
-          digitalWrite(carRed, HIGH);
-          digitalWrite(carYellow, HIGH);
-          digitalWrite(carGreen, LOW);
-        break;
-        case 20 :
-          Serial.println("Pedestrian Padam");
+    kirim_data(1);
+    delay(300);
 
-          digitalWrite(pedRed, LOW);
-          digitalWrite(pedGreen, LOW);
-        break; 
-        case 21 :
-          Serial.println("Pedestrian Merah");
-          
-          digitalWrite(pedRed, HIGH);
-          digitalWrite(pedGreen, LOW);
-        break;
-        case 23 :
-          Serial.println("Pedestrian Hijau");
+    mode_receive();
 
-          digitalWrite(pedRed, LOW);
-          digitalWrite(pedGreen, HIGH);
-        break;
-        default:
+    tombol_ditekan();
+  } 
 
-        break;
-      }
-  }  
+  if ( terima_data() == 100 ) {
+    tombolLED_on();
+    tombol_ditekan();
+  }
 
-  if ( ledState == 0 ) { hitungMillis();}
+  hitungMillis();
 }
 
 
@@ -186,7 +125,22 @@ void kuning_flashing()
   }
 }
 
-void mode_transmit(){
+void tombolLED_on()
+{
+  digitalWrite(ledButton, HIGH);
+  ledState = 1;
+  buttonState = 1;
+}
+
+void tombolLED_off()
+{
+  digitalWrite(ledButton, LOW);
+  ledState = 0;
+  buttonState = 0;
+}
+
+void mode_transmit()
+{
   radio.begin();
   radio.openWritingPipe(address);
   if ( minMaxState == MIN ) {
@@ -197,7 +151,8 @@ void mode_transmit(){
   radio.stopListening(); 
 }
 
-void kirim_data(int isiData){
+void kirim_data(int isiData)
+{
   sentMessage[0] = isiData;
   radio.write(sentMessage, 2);
 
@@ -207,7 +162,8 @@ void kirim_data(int isiData){
   Serial.println(sentMessage[0]);
 }
 
-void mode_receive(){
+void mode_receive()
+{
   radio.begin();
   radio.openReadingPipe(0, address);
   if ( minMaxState == MIN ) {
@@ -218,7 +174,8 @@ void mode_receive(){
   radio.startListening();
 }
 
-int terima_data(){
+int terima_data()
+{
   dataMasuk[0] = 0;
   if (radio.available()) {
     
@@ -233,3 +190,85 @@ int terima_data(){
 
   return dataMasuk[0];
 }
+
+void tombol_ditekan()
+{
+  do{
+    switch ( terima_data() ) {
+      case 100:
+        tombolLED_on();
+        Serial.println("Tombol Ditekan");
+      break;
+      case 1000 :
+        Serial.println("Semua Padam");
+        
+        digitalWrite(pedRed, LOW);
+        digitalWrite(pedGreen, LOW);
+        digitalWrite(carRed, LOW);
+        digitalWrite(carYellow, LOW);
+        digitalWrite(carGreen, LOW);
+        
+        tombolLED_off();
+      break;
+      case 10 : 
+        Serial.println("Kendaraan Padam");
+        
+        digitalWrite(carRed, LOW);
+        digitalWrite(carYellow, LOW);
+        digitalWrite(carGreen, LOW);
+      break;
+      case 11 :
+        Serial.println("Kendaraan Merah");
+        
+        digitalWrite(carRed, HIGH);
+        digitalWrite(carYellow, LOW);
+        digitalWrite(carGreen, LOW);
+      break;
+      case 12 :
+        Serial.println("Kendaraan Kuning");
+        
+        digitalWrite(carRed, LOW);
+        digitalWrite(carYellow, HIGH);
+        digitalWrite(carGreen, LOW);
+      break;
+      case 13 :
+        Serial.println("Kendaraan Hijau");
+
+        digitalWrite(carRed, LOW);
+        digitalWrite(carYellow, LOW);
+        digitalWrite(carGreen, HIGH);
+
+        digitalWrite(pedGreen, LOW);
+      break;
+      case 14 :
+        Serial.println("Kendaraan Merah Kuning");
+        digitalWrite(carRed, HIGH);
+        digitalWrite(carYellow, HIGH);
+        digitalWrite(carGreen, LOW);
+      break;
+      case 20 :
+        Serial.println("Pedestrian Padam");
+
+        digitalWrite(pedRed, LOW);
+        digitalWrite(pedGreen, LOW);
+      break; 
+      case 21 :
+        Serial.println("Pedestrian Merah");
+        
+        digitalWrite(pedRed, HIGH);
+        digitalWrite(pedGreen, LOW);
+      break;
+      case 23 :
+        Serial.println("Pedestrian Hijau");
+
+        digitalWrite(pedRed, LOW);
+        digitalWrite(pedGreen, HIGH);
+
+        digitalWrite(carGreen, LOW);
+      break;
+      default:
+
+      break;
+    }
+  } while ( ledState == 1 );
+} 
