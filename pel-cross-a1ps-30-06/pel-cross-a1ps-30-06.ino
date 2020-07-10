@@ -10,7 +10,7 @@
 
 // modul 7 Segmen 
 #define CLK 32 
-#define DIO 33
+#define DIO 34
 
 #define MIN 0
 #define MAX 1
@@ -30,8 +30,8 @@ char keys[ROWS][COLS] = {
   {'a','3','2','1'}
 };
 
-byte rowPins[ROWS] = {29,28,27,26};
-byte colPins[COLS] = {25,24,23,22};
+byte rowPins[ROWS] = {37,35,33,31};
+byte colPins[COLS] = {29,27,25,23};
 
 Keypad keypad = Keypad(makeKeymap(keys),rowPins,colPins,ROWS,COLS);
 
@@ -41,17 +41,17 @@ const int addrJeda = 2;
 
 const int button = 2;
 const int ledButton = 3;
-const int speaker = 5;
+const int speaker = 43;
 
 const int alamatSatu = 6;
 const int alamatDua = 7;
 const int switchMinMax = 8;
 
-const int pedRed = 9;
-const int pedGreen = 10;
-const int carRed = 11;
+const int pedRed = 10;
+const int pedGreen = 9;
+const int carRed = 13;
 const int carYellow = 12;
-const int carGreen =  13;
+const int carGreen =  11;
 
 byte address = 225;
 

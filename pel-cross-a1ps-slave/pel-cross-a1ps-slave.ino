@@ -8,11 +8,11 @@
 
 RF24 radio(9, 10); // CE, CSN
 
-const int button = 2;
+const int button = 5;
 const int ledButton =  6;
 const int speaker = 7;
 
-const int alamatSatu = 5;
+const int alamatSatu = 2;
 const int alamatDua = 3;
 const int switchMinMax = 4;
 
@@ -28,7 +28,7 @@ bool buttonState = 0;
 bool minMaxState = MIN;
 bool ledState = 0; // status enable tombol penyebrangan
 
-byte counterSinyalLost = 0;
+byte counterSinyalLost = 55;
 const byte batasSinyalLost = 60;
 
 
@@ -74,6 +74,7 @@ void setup() {
 
 void loop() {
   buttonState = digitalRead(button);
+  Serial.println(buttonState);
 
   if ( buttonState == HIGH ) {
   
