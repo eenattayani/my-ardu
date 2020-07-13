@@ -222,6 +222,51 @@ int terima_data()
   return dataMasuk[0];
 }
 
+//*********Buzzer*******
+void playTone(int tone, int duration) {
+  for ( long i = 0; i < duration * 1000L; i += tone * 2 ) {
+    digitalWrite(speaker, HIGH);
+    delayMicroseconds(tone);
+    digitalWrite(speaker, LOW);
+    delayMicroseconds(tone);
+  }
+}
+
+void playNote(char note, int duration) {
+  char names[] = { 'c', 'd', 'e', 'f', 'g', 'a', 'b', 'C' };
+  int tones[] = { 1915, 1700, 1519, 1432, 1275, 1136, 1014, 956 };
+
+  // play the tone corresponding to the note name
+  for ( int i = 0; i < 8; i++ ) {
+    if ( names[i] == note ) {
+      playTone(tones[i], duration);
+      delay(200);
+    }
+  }
+}
+
+void suara_counter()
+{
+  playNote(notes[1], 200);
+  delay(tempo / 1);
+}
+
+void suara_hijau_awal()
+{
+  playNote(notes[0], 200);
+    delay(tempo / 1);
+  playNote(notes[1], 200);
+    delay(tempo / 1);
+}
+
+void suara_hijau_akhir()
+{
+  playNote(notes[0], 100);
+    delay(tempo / 0.5);
+  playNote(notes[1], 100);
+    delay(tempo / 0.5);
+}
+
 void tombol_ditekan()
 {
   do{
@@ -298,6 +343,18 @@ void tombol_ditekan()
 
         digitalWrite(carRed, HIGH);
         digitalWrite(carGreen, LOW);
+      break;
+      case 31 :
+      //suara ketika counterdown waktu tunggu aktif
+      suara_counter();
+      break;
+      case 32 :
+      //suara ketika pedestrian ketika menyebrang      
+      suara_hijau_awal();
+      break;
+      case 33 :
+      // suara ketika pedestrian sisa 5 detik
+      suara_hijau_akhir();
       break;
       default:
         curMillis = millis();
