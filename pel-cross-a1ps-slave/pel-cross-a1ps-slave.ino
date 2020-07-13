@@ -13,14 +13,14 @@ const int ledButton =  6;
 const int speaker = 7;
 
 const int alamatSatu = 2;
-const int alamatDua = 3;
+//const int alamatDua = 3;
 const int switchMinMax = 4;
 
-const int pedRed = A0;
-const int pedGreen = A1;
-const int carRed = A2;
+const int pedRed = A1;
+const int pedGreen = A0;
+const int carRed = A4;
 const int carYellow = A3;
-const int carGreen =  A4;
+const int carGreen =  A2;
 
 byte address = 225;
 
@@ -53,7 +53,7 @@ void setup() {
   pinMode(ledButton, OUTPUT);
   pinMode(speaker, OUTPUT);
   pinMode(alamatSatu, INPUT);
-  pinMode(alamatDua, INPUT);
+//  pinMode(alamatDua, INPUT);
   pinMode(switchMinMax, INPUT);
   pinMode(pedRed, OUTPUT);
   pinMode(pedGreen , OUTPUT);
@@ -65,7 +65,8 @@ void setup() {
   digitalWrite(carYellow, HIGH);
 
   if (digitalRead(alamatSatu) == 1) {address = 224;}
-  else if (digitalRead(alamatDua) == 1) {address = 223;}
+//  else if (digitalRead(alamatDua) == 1) {address = 223;}
+  minMaxState = digitalRead(switchMinMax);
   
   Serial.begin(9600);
   
@@ -74,7 +75,8 @@ void setup() {
 
 void loop() {
   buttonState = digitalRead(button);
-  Serial.println(buttonState);
+//  Serial.print("button state: ");
+//  Serial.println(buttonState);
 
   if ( buttonState == HIGH ) {
   
@@ -120,6 +122,8 @@ void kuning_flashing()
     kuning = 1;
     Serial.print(hitMillis);
     Serial.println(" OFF");
+    Serial.print("alamat: ");
+    Serial.println(address);
   } 
   else {
     digitalWrite(carYellow,HIGH);
@@ -145,12 +149,22 @@ void tombolLED_off()
 
 void mode_transmit()
 {
+  if (digitalRead(alamatSatu) == 1) {address = 224;}
+  else { address = 225; }
+  
   radio.begin();
+
+  minMaxState = digitalRead(switchMinMax);
+  
   radio.openWritingPipe(address);
   if ( minMaxState == MIN ) {
     radio.setPALevel(RF24_PA_MIN);
+    Serial.print("min max State: ");
+    Serial.println(minMaxState);
   } else {
     radio.setPALevel(RF24_PA_MAX);
+    Serial.print("min max State: ");
+    Serial.println(minMaxState);
   }
   radio.stopListening(); 
 }
@@ -168,12 +182,22 @@ void kirim_data(int isiData)
 
 void mode_receive()
 {
+  if (digitalRead(alamatSatu) == 1) {address = 224;}
+  else { address = 225; }
+  
   radio.begin();
+
+  minMaxState = digitalRead(switchMinMax);
+  
   radio.openReadingPipe(0, address);
   if ( minMaxState == MIN ) {
     radio.setPALevel(RF24_PA_MIN);
+    Serial.print("min max State: ");
+    Serial.println(minMaxState);
   } else {
     radio.setPALevel(RF24_PA_MAX);
+    Serial.print("min max State: ");
+    Serial.println(minMaxState);
   }
   radio.startListening();
 }

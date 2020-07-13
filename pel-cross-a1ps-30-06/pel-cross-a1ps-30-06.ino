@@ -3,6 +3,9 @@
 #include <Keypad.h>
 #include <EEPROM.h>
 
+// #include <SoftwareSerial.h>
+#include <DFPlayer_Mini_Mp3.h>
+
 #include <Wire.h>
 #include <SPI.h>
 #include <nRF24L01.h>
@@ -14,6 +17,8 @@
 
 #define MIN 0
 #define MAX 1
+
+#define mp3 Serial1 
 
 TM1637Display display(CLK, DIO);
 LiquidCrystal_I2C lcd(0x27, 20, 4);  //0x27 0x3F  // Mega(SDA, SCL) = 20, 21 
@@ -44,7 +49,7 @@ const int ledButton = 3;
 const int speaker = 43;
 
 const int alamatSatu = 6;
-const int alamatDua = 7;
+//const int alamatDua = 7;
 const int switchMinMax = 8;
 
 const int pedRed = 10;
@@ -62,6 +67,9 @@ int durasiAllRed = 3000;
 int durasiKuning = 2000;
 int durasiHijau = 20000;
 int durasiAutoOut = 60;
+byte volume = 15;
+byte trackMulai = 1;
+byte trackStop = 2;
 
 bool minMaxState = MIN;
 unsigned int count = 0;
@@ -96,7 +104,7 @@ void setup() {
   pinMode(button, INPUT);
   pinMode(speaker, OUTPUT);
   pinMode(alamatSatu, INPUT);
-  pinMode(alamatDua, INPUT);
+//  pinMode(alamatDua, INPUT);
   pinMode(switchMinMax, INPUT);
   pinMode(pedRed, OUTPUT);
   pinMode(pedGreen , OUTPUT);
@@ -111,17 +119,29 @@ void setup() {
   digitalWrite(carYellow,HIGH);
 
   if (digitalRead(alamatSatu) == 1) {address = 224;}
-  else if (digitalRead(alamatDua) == 1) {address = 223;}
+//  else if (digitalRead(alamatDua) == 1) {address = 223;}
+  minMaxState = digitalRead(switchMinMax);
   
 
   durPelican = EEPROM.read(addrPelican);
   durTunggu = EEPROM.read(addrTunggu);
   durJeda = EEPROM.read(addrJeda);
 
-  // Serial.begin(9600);
-  // while (!Serial) {
-  //   // wait for serial port to connect. Needed for native USB port only
-  // }
+   Serial.begin(9600);
+   while (!Serial) {
+     // wait for serial port to connect. Needed for native USB port only
+   }
+
+   mp3.begin(9600);
+   while (!mp3) {
+     // wait for serial port to connect.
+   }
+   mp3_set_serial(mp3);
+   delay(10);
+   mp3_reset();
+   delay(1000);
+   mp3_set_volume(volume);
+   delay(10);
 
   if(durPelican > 200) {durPelican = 20;}
   if(durTunggu > 200) {durTunggu = 20;}
@@ -144,6 +164,8 @@ void setup() {
   keypad.setHoldTime(500);
   
   display.setBrightness(0x0f);
+
+  mp3_play(trackMulai);
 
   modeTransmit();
   delay(500);
@@ -261,6 +283,11 @@ void kuning_flashing(){
     kuning = 1;
     lcd.setCursor(0,3);
     lcd.print("            ");
+
+    Serial.print("alamat: ");
+    Serial.println(address);
+    Serial.print("min max state: ");
+    Serial.println(minMaxState);
   } 
   else {
     digitalWrite(carYellow,HIGH);
@@ -282,6 +309,8 @@ void countdownAktif(){
   
     //counterdown aktif
     for ( int x = durTunggu; x > 0; x-- ) {  
+      kirimData(13);
+
       lcd.setCursor(0,1);
       lcd.print("       ");
       lcd.print(x);
@@ -290,8 +319,6 @@ void countdownAktif(){
       playNote(notes[1], 200);
       delay(tempo / 1);
       delay(500);
-
-      kirimData(13);
     }
 
     lcd.setCursor(0,1);
@@ -304,6 +331,8 @@ void countdownAktif(){
 }
 
 void changeLights(){
+
+  mp3_play(trackStop);
 
   digitalWrite(carGreen,LOW);
   digitalWrite(carYellow,HIGH);
@@ -702,6 +731,12 @@ int terimaData()
     lcd.print(dataMasuk[0]);
     lcd.print(" ");
     lcd.print(count);
+    
+    Serial.print("terima: ");
+    Serial.print(dataMasuk[0]);
+    Serial.print(" ");
+    Serial.println(count);
+    
   }
 
   return dataMasuk[0];
