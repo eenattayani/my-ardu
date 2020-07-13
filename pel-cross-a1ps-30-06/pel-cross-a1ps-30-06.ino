@@ -46,7 +46,7 @@ const int addrJeda = 2;
 
 const int button = 2;
 const int ledButton = 3;
-const int speaker = 43;
+const int speaker = 41;
 
 const int alamatSatu = 6;
 //const int alamatDua = 7;
@@ -67,7 +67,7 @@ int durasiAllRed = 3000;
 int durasiKuning = 2000;
 int durasiHijau = 20000;
 int durasiAutoOut = 60;
-byte volume = 15;
+byte volume = 20;
 byte trackMulai = 1;
 byte trackStop = 2;
 
@@ -309,16 +309,18 @@ void countdownAktif(){
   
     //counterdown aktif
     for ( int x = durTunggu; x > 0; x-- ) {  
-      kirimData(13);
-
       lcd.setCursor(0,1);
       lcd.print("       ");
       lcd.print(x);
       lcd.print("    ");
       display.showNumberDec(x);
+      
+      kirimData(31);
+      
       playNote(notes[1], 200);
       delay(tempo / 1);
       delay(500);
+      
     }
 
     lcd.setCursor(0,1);
@@ -360,12 +362,11 @@ void changeLights(){
     lcd.print("       ");
     display.showNumberDec(x);
     
+    kirimData(32);
     playNote(notes[0], 200);
       delay(tempo / 1);
     playNote(notes[1], 200);
       delay(tempo / 1);
-
-   kirimData(23);
   }
   
   //flashing lampu hijau penyebrangan ; status = off
@@ -376,16 +377,11 @@ void changeLights(){
     lcd.print("       ");
     display.showNumberDec(x);
     
-    // digitalWrite(pedGreen,HIGH);
-    // kirimData(23);
+    kirimData(33);
     playNote(notes[0], 100);
       delay(tempo / 0.5);
-    // digitalWrite(pedGreen,LOW);
-    // kirimData(20);
     playNote(notes[1], 100);
       delay(tempo / 0.5);
-
-    kirimData(23);
   }
 
   digitalWrite(pedGreen,LOW);

@@ -344,17 +344,27 @@ void tombol_ditekan()
         digitalWrite(carRed, HIGH);
         digitalWrite(carGreen, LOW);
       break;
+      case 30 :
+       //suara mulai lewat modul mp3 
+       Serial.println("play Suara mulai");
+       
+      break;
       case 31 :
-      //suara ketika counterdown waktu tunggu aktif
-      suara_counter();
+        //suara ketika counterdown waktu tunggu aktif
+        Serial.println("play Suara counterdown");
+        
+        suara_counter();
       break;
       case 32 :
-      //suara ketika pedestrian ketika menyebrang      
-      suara_hijau_awal();
+        //suara ketika pedestrian ketika menyebrang   
+        Serial.println("play Suara hijau awal");
+           
+        suara_hijau_awal();
       break;
       case 33 :
-      // suara ketika pedestrian sisa 5 detik
-      suara_hijau_akhir();
+        // suara ketika pedestrian sisa 5 detik
+        Serial.println("play Suara hijau akhir");
+        suara_hijau_akhir();
       break;
       default:
         curMillis = millis();
