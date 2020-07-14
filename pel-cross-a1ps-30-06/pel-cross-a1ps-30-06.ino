@@ -68,8 +68,8 @@ int durasiKuning = 2000;
 int durasiHijau = 20000;
 int durasiAutoOut = 60;
 byte volume = 20;
-byte trackMulai = 1;
-byte trackStop = 2;
+byte trackMulai = 2;
+byte trackStop = 30;
 
 bool minMaxState = MIN;
 unsigned int count = 0;
