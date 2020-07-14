@@ -604,10 +604,8 @@ void aturJeda()
 
 }
 
-int menuPengaturanDurasi(int data_durasi)
+int menuPengaturanDurasi(int durasi)
 {
-  int durasi = data_durasi;
-
   hitMillis = 0;
     
   lcd.clear();
@@ -634,15 +632,14 @@ int menuPengaturanDurasi(int data_durasi)
     
     tombol = keypad.getKey();
     if ( tombol == 'a' ) {  
-        durasi = data_durasi;
-        statusSimpan = false;          //cancel
+        statusSimpan = false;                //cancel
         statusTombol = 1;
         lcd.clear();
         lcd.setCursor(0,0);
         lcd.print("   Cancel...");
         delay(1000);
       }
-    else if ( tombol == 'b' ) {        //simpan
+    else if ( tombol == 'b' ) {                 //simpan
         statusSimpan = true;
         statusTombol = 1;
         lcd.clear();
@@ -650,7 +647,7 @@ int menuPengaturanDurasi(int data_durasi)
         lcd.print("    Saved...");
         delay(1000);
     }
-    else if ( tombol == '#' || tombol == 'c' ) {      //tambah durasi ++
+    else if ( tombol == '#' || tombol == 'c' ) {                 //tambah durasi ++
       statusTombol = 0;
       durasi += 1;
       if ( durasi > 120 ) { durasi = 120; }
@@ -658,7 +655,7 @@ int menuPengaturanDurasi(int data_durasi)
       lcd.print(durasi);
       lcd.print(" ");
     }
-    else if ( tombol == '*' || tombol == 'd' ) {       //kurangi durasi --
+    else if ( tombol == '*' || tombol == 'd' ) {                  //kurangi durasi --
       statusTombol = 0;
       durasi -= 1;
       if ( durasi < 0 ) { durasi = 0; }
@@ -670,9 +667,7 @@ int menuPengaturanDurasi(int data_durasi)
         statusTombol = 0;
     }
 
-    if ( hitMillis > durasiAutoOut ) {  // auto cancel...
-        durasi = data_durasi;
-        statusSimpan = false;
+    if ( hitMillis > durasiAutoOut ) {
         statusTombol = 1;
         hitMillis = 0;
         lcd.clear();
