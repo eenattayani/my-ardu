@@ -2,5 +2,5 @@
     "board": "arduino:avr:mega",
     "configuration": "cpu=atmega2560",
     "port": "COM10",
-    "sketch": "pel-cross-a1ps-30-06.ino"
+    "sketch": "pel-cross-a1ps-30-06-mp3.ino"
 }

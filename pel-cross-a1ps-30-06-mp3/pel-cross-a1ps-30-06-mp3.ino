@@ -68,8 +68,10 @@ int durasiKuning = 2000;
 int durasiHijau = 20000;
 int durasiAutoOut = 60;
 byte volume = 20;
-byte trackMulai = 1;
-byte trackStop = 2;
+byte trackMulai = 2;
+byte trackStop = 30;
+byte trackA = 4;
+byte trackB = 5;
 
 bool minMaxState = MIN;
 unsigned int count = 0;
@@ -318,8 +320,11 @@ void countdownAktif()
       
       kirimData(31);
       
-      playNote(notes[1], 200);
-      delay(tempo / 1);
+      // playNote(notes[1], 200);
+      // delay(tempo / 1);
+      mp3_play(trackB);
+      delay(tempo);
+      mp3_stop();
       delay(500);
       
     }
@@ -357,7 +362,7 @@ void changeLights()
   digitalWrite(pedGreen,HIGH);
   kirimData(23);
 
-  for ( int x=durPelican; x >= 6; x-- ) {
+  for ( int x = durPelican; x >= 6; x-- ) {
     lcd.setCursor(0,1);
     lcd.print("       ");
     lcd.print(x);
@@ -365,14 +370,20 @@ void changeLights()
     display.showNumberDec(x);
     
     kirimData(32);
-    playNote(notes[0], 200);
-      delay(tempo / 1);
-    playNote(notes[1], 200);
-      delay(tempo / 1);
+    // playNote(notes[0], 200);
+    //   delay(tempo / 1);
+    // playNote(notes[1], 200);
+    //   delay(tempo / 1);
+    mp3_play(trackA);
+    delay(tempo);
+    mp3_stop();
+    mp3_play(trackB);
+    delay(tempo);
+    mp3_stop();
   }
   
   //flashing lampu hijau penyebrangan ; status = off
-  for ( int x = 5; x>=0; x-- ) {
+  for ( int x = 5; x >= 0; x-- ) {
     lcd.setCursor(0,1);
     lcd.print("       ");
     lcd.print(x);
@@ -380,10 +391,17 @@ void changeLights()
     display.showNumberDec(x);
     
     kirimData(33);
-    playNote(notes[0], 100);
-      delay(tempo / 0.5);
-    playNote(notes[1], 100);
-      delay(tempo / 0.5);
+    // playNote(notes[0], 100);
+    //   delay(tempo / 0.5);
+    // playNote(notes[1], 100);
+    //   delay(tempo / 0.5);
+
+    mp3_play(trackA);
+    delay(tempo / 0.5);
+    mp3_stop();
+    mp3_play(trackB);
+    delay(tempo / 0.5);
+    mp3_stop();
   }
 
   digitalWrite(pedGreen,LOW);
@@ -407,7 +425,7 @@ void changeLights()
   kirimData(13);
   lcd.setCursor(0,0);
   lcd.print("Kendaraan Jalan  ");
-  for ( int x=durJeda; x>=0; x-- ) {
+  for ( int x = durJeda; x >= 0; x-- ) {
     lcd.setCursor(0,1);
     lcd.print("       ");
     lcd.print(x);
