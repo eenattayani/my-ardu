@@ -70,13 +70,13 @@ bool keluar = false;
 // String menu = "";
 String mode = "";
 String jam_pelajaran = "OFF";
-String status_jadwal = "B";
+String status_jadwal = "A";
 String tanda = "->";
 String data_jam_pelajaran[] = {};
 byte counter = 0;
 char hold_tombol;
 
-byte kode_jadwal[7] = { 0, 1, 1, 1, 1, 1, 1};
+byte kode_jadwal[7] = { 0, 2, 1, 1, 1, 3, 0};
 String label_kode_jadwal[jumlah_kode] = {"OFF", "A", "B", "C", "D"};
 
 byte jam_A[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
@@ -178,7 +178,7 @@ void setup()
   delay(10);
 
   mulai();
-  mp3_play(1);
+  // mp3_play(1);
   delay(2000);
 }
 
@@ -192,7 +192,7 @@ void loop()
   }
 
   if ( keypad.getState() == 2 ) {
-    if ( hold_tombol == '1' ) pilihan();
+    if ( hold_tombol == '1' ) mode_manual();
     else if ( hold_tombol == '2' ) pengaturan();
     else if ( hold_tombol == '3' ) tes_sound();
     else if ( hold_tombol == '8' ) atur_volume(hold_tombol);
@@ -247,12 +247,12 @@ void tes_sound()
       switch (tombol) {
         case '1':
           track -= 1;
-          if ( track < 1 ) track = 22;
+          if ( track < 1 ) track = 30;
           mp3_play(track);
         break;
         case '2':
           track += 1;
-          if ( track > 22 ) track = 1;
+          if ( track > 30 ) track = 1;
           mp3_play(track);
         break;
         case '4':
@@ -398,47 +398,78 @@ void pengaturan()
   keluar = false;
 }
 
-void pilihan()
+void mode_manual()
 {
-  masuk_menu("MODE BEL");
+  masuk_menu("MODE MANUAL");
 
-  lcd.print("1.manual  ");
-  lcd.setCursor(0,1);
-  lcd.print("2.jadwal  ");
+  lcd.print("Pilih Track 0-9");
 
   do {
-    start_counter();
+    // start_counter();
 
     char tombol = keypad.getKey();
     if ( tombol != NO_KEY ) {
-      counter = 0;
+      // counter = 0;
+      lcd.setCursor(3,1);
+      lcd.print("Play: ");
       switch (tombol) {
+        case '0':
+          mp3_play(10);
+          lcd.setCursor(9,1);
+          lcd.print("10 ");
+        break;
         case '1':
-          status_jadwal = "A";
-          lcd.clear();
-          mode = "Mode Manual";
-          mode_dipilih();
+          mp3_play(1);
+          lcd.setCursor(9,1);
+          lcd.print("1 ");
         break;
         case '2':
-          status_jadwal = "B";
-          mode = "Mode Jadwal";
-          mode_dipilih();
+          mp3_play(2);
+          lcd.setCursor(9,1);
+          lcd.print("2 ");
         break;
         case '3':
-          status_jadwal = "C";
-          mode = "Mode UTS";
-          mode_dipilih();
+          mp3_play(3);
+          lcd.setCursor(9,1);
+          lcd.print("3 ");
         break;
         case '4':
-          status_jadwal = "D";
-          mode = "Mode UAS";
-          mode_dipilih();
+          mp3_play(4);
+          lcd.setCursor(9,1);
+          lcd.print("4 ");
+        break;
+        case '5':
+          mp3_play(5);
+          lcd.setCursor(9,1);
+          lcd.print("5 ");
+        break;
+        case '6':
+          mp3_play(6);
+          lcd.setCursor(9,1);
+          lcd.print("6 ");
+        break;
+        case '7':
+          mp3_play(7);
+          lcd.setCursor(9,1);
+          lcd.print("7 ");
+        break;
+        case '8':
+          mp3_play(8);
+          lcd.setCursor(9,1);
+          lcd.print("8 ");
         break;
         case '9':
-          kembali();
+          mp3_play(9);
+          lcd.setCursor(9,1);
+          lcd.print("9 ");
         break;
         case '#':
           kembali();
+        break;
+        case '*':
+          mp3_pause();
+          lcd.setCursor(3,1);
+          lcd.print("STOP... ");
         break;
         default:
 
@@ -448,16 +479,6 @@ void pilihan()
   } while (keluar == false);
 
   keluar = false;
-}
-
-void mode_dipilih()
-{
-  keluar = true;
-  lcd.clear();
-  lcd.print(mode);
-  lcd.setCursor(0,1);
-  lcd.print("Dipilih");
-  delay(1000);
 }
 
 void simpan()
@@ -484,10 +505,6 @@ void kembali()
   delay(500);
 }
 
-void set_manual()
-{
-  masuk_menu("Set Mode Manual");
-}
 
 void set_jadwal()
 {
@@ -910,6 +927,14 @@ void baca_waktu()
   jam = myRTC.hours;
   menit =  myRTC.minutes;
   detik = myRTC.seconds;
+
+  // hari = 1;
+  // tanggal = 16;
+  // bulan = 7;
+  // tahun= 2020;
+  // jam = 12;
+  // menit = 41;
+  // detik = 20;
 }
 
 void tampil_waktu()
@@ -944,18 +969,34 @@ void tampil_waktu()
 
 void tampil_status()
 {
-  if ( nama_hari[hari] == "SENIN" ) {
-    for ( int i = 0; i < 20; i++  ){
+  String kode = label_kode_jadwal[kode_jadwal[hari]];
+  if ( kode == "A" ) {
+    for ( int i = 0; i < 20; i++ ){
+      jam_jadwal[i] = jam_A[i];
+      menit_jadwal[i] = menit_A[i];
+      nada[i] = track_A[i];
+    }
+  } else if ( kode == "B" ) {
+    for ( int i = 0; i < 20; i++ ){
       jam_jadwal[i] = jam_B[i];
       menit_jadwal[i] = menit_B[i];
+      nada[i] = track_B[i];
     }
-  } else if ( nama_hari[hari] == "JUMAT" ) {
-    for ( int i = 0; i < 20; i++  ){
+  } else if ( kode == "C" ) {
+    for ( int i = 0; i < 20; i++ ){
       jam_jadwal[i] = jam_C[i];
       menit_jadwal[i] = menit_C[i];
+      nada[i] = track_C[i];
     }
-  } else {
-    for ( int i = 0; i < 20; i++  ){
+  } else if ( kode == "D" ) {
+    for ( int i = 0; i < 20; i++ ){
+      jam_jadwal[i] = jam_D[i];
+      menit_jadwal[i] = menit_D[i];
+      nada[i] = track_D[i];
+    }
+  } 
+  else {
+    for ( int i = 0; i < 20; i++ ){
       jam_jadwal[i] = jam_A[i];
       menit_jadwal[i] = menit_A[i];
       nada[i] = track_A[i];
@@ -964,6 +1005,7 @@ void tampil_status()
 
   jam_pelajaran = "OFF";
   tanda = "->";
+  status_jadwal = kode;
   lcd.setCursor(0,1);
   lcd.print(status_jadwal);
   lcd.print(tanda);
@@ -998,7 +1040,7 @@ void view_status_jampel(int i)
     lcd.print(status_jadwal);
     lcd.print(tanda);
     lcd.print(jam_pelajaran);
-    lcd.print(" ");
+    lcd.print("   ");
   } else {
     lcd.setCursor(0,1);
     if ( jam_jadwal[i] < 10 ) { lcd.print("0"); }
@@ -1379,7 +1421,7 @@ void menu_kode_jadwal()
           kembali();
         break;
         case '#':
-          
+          kembali();
         break;  
         default:
 
