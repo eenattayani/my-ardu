@@ -67,7 +67,7 @@ int durasiAllRed = 3000;
 int durasiKuning = 2000;
 int durasiHijau = 20000;
 int durasiAutoOut = 60;
-byte volume = 20;
+byte volume = 30;
 byte trackMulai = 2;
 byte trackStop = 30;
 

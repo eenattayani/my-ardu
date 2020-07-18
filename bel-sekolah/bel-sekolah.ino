@@ -15,34 +15,33 @@
 const byte addrVolume = 0;
 const byte addrTrack = 1;
 
-const byte addrJamA = 100;
-const byte addrMenitA = 120;
-const byte addrTrackA = 10;
+const int addrJamA = 100;
+const int addrMenitA = 120;
+const int addrTrackA = 10;
 
-const byte addrJamB = 140;
-const byte addrMenitB = 160;
-const byte addrTrackB = 30;
+const int addrJamB = 140;
+const int addrMenitB = 160;
+const int addrTrackB = 30;
 
-const byte addrJamC = 180;
-const byte addrMenitC = 200;
-const byte addrTrackC = 50;
+const int addrJamC = 180;
+const int addrMenitC = 200;
+const int addrTrackC = 50;
 
 const int addrJamD = 220;
 const int addrMenitD = 240;
-const byte addrTrackD = 70; 
+const int addrTrackD = 70; 
 
 const int addrKodeJadwal = 300; //[7]
 
 const int addrJamE = 320;
 const int addrMenitE = 340;
-const byte addrTrackE = 360;
+const int addrTrackE = 360;
 
 const int addrJamF = 380;
 const int addrMenitF = 400;
-const byte addrTrackF = 420;
+const int addrTrackF = 420;
 
-
-// const int addrJamRutin[] = {10,11,12,13,14,15,16,17,18,19,20,21};
+const int spaceAddr = 20;
 
 
 LiquidCrystal_I2C lcd(0x3F, 16, 2); //0x27  0x3F
@@ -70,8 +69,7 @@ byte colPins[COLS] = {4,3,2,1};
 
 Keypad keypad = Keypad(makeKeymap(keys),rowPins,colPins,ROWS,COLS);
 
-String nama_hari[] = {"AHAD","SENIN","SELASA","RABU","KAMIS","JUMAT","SABTU"};
-// String nama_bulan[] = {"Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"};
+String nama_hari[] = {"MINGGU","SENIN","SELASA","RABU","KAMIS","JUMAT","SABTU"};
 int hari,tanggal, bulan, tahun, jam, menit, detik;
 
 unsigned long int previousMillis = millis(); 
@@ -79,40 +77,22 @@ unsigned long int currentMillis;
 const int jeda = 1000;
 const byte autoOut = 60;
 bool keluar = false;
-// String menu = "";
 String mode = "";
 int jam_pelajaran = 0;
-String status_jadwal = "A";
+char status_jadwal = "A";
 String tanda = "->";
 byte counter = 0;
 char hold_tombol;
 
 byte kode_jadwal[7] = { 0, 2, 1, 1, 1, 3, 0};
-String label_kode_jadwal[jumlah_kode] = {"OFF", "A", "B", "C", "D", "E", "F"};
+char label_kode_jadwal[jumlah_kode] = {'O', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-byte jam_A[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
-byte menit_A[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
-byte track_A[jumlah_jadwal] = { 1,   5,    5,   4,   1,   5,   5,    4,    1,    5,   8};
-
-byte jam_B[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
-byte menit_B[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
-byte track_B[jumlah_jadwal] = { 1,   5,    5,   4,   1,   5,   5,    4,    1,    5,   8};
-
-byte jam_C[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,    0,    0,    0,   0};
-byte menit_C[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
-byte track_C[jumlah_jadwal] = { 1,   5,    5,   4,   1,   5,   5,    4,    1,    5,   8};
-
-byte jam_D[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,    0,    0,    0,   0};
-byte menit_D[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
-byte track_D[jumlah_jadwal] = { 1,   5,    5,   4,   1,   5,   5,    4,    1,    5,   8};
-
-byte jam_E[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,    0,    0,    0,   0};
-byte menit_E[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
-byte track_E[jumlah_jadwal] = { 1,   5,    5,   4,   1,   5,   5,    4,    1,    5,   8};
-
-byte jam_F[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,    0,    0,    0,   0};
-byte menit_F[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
-byte track_F[jumlah_jadwal] = { 1,   5,    5,   4,   1,   5,   5,    4,    1,    5,   8};
+byte jam_A[jumlah_jadwal], menit_A[jumlah_jadwal], track_A[jumlah_jadwal];
+byte jam_B[jumlah_jadwal], menit_B[jumlah_jadwal], track_B[jumlah_jadwal];
+byte jam_C[jumlah_jadwal], menit_C[jumlah_jadwal], track_C[jumlah_jadwal];
+byte jam_D[jumlah_jadwal], menit_D[jumlah_jadwal], track_D[jumlah_jadwal];
+byte jam_E[jumlah_jadwal], menit_E[jumlah_jadwal], track_E[jumlah_jadwal];
+byte jam_F[jumlah_jadwal], menit_F[jumlah_jadwal], track_F[jumlah_jadwal];
 
 byte jam_jadwal[jumlah_jadwal] =   { 7,   7,    8,   9,   9,  10,  11,   11,   12,   12,  13};
 byte menit_jadwal[jumlah_jadwal] = { 0,  45,   30,  15,  30,  15,   0,   45,    0,   45,  30};
@@ -146,6 +126,7 @@ void setup()
   for ( int i = 0; i < 20; i++  ){
     jam_A[i] = EEPROM.read(addrJamA + 1 + i);
     menit_A[i] = EEPROM.read(addrMenitA + 1 + i);
+    track_A[i] = EEPROM.read(addrTrackA + 1 + i);
 
     Serial.print(jam_A[i]);
     Serial.print(":");
@@ -156,6 +137,7 @@ void setup()
   for ( int i = 0; i < 20; i++  ){
     jam_B[i] = EEPROM.read(addrJamB + 1 + i);
     menit_B[i] = EEPROM.read(addrMenitB + 1 + i);
+    track_B[i] = EEPROM.read(addrTrackB + 1 + i);
 
     Serial.print(jam_B[i]);
     Serial.print(":");
@@ -166,6 +148,7 @@ void setup()
   for ( int i = 0; i < 20; i++ ){
     jam_C[i] = EEPROM.read(addrJamC + 1 + i);
     menit_C[i] = EEPROM.read(addrMenitC + 1 + i);
+    track_C[i] = EEPROM.read(addrTrackC + 1 + i);
 
     Serial.print(jam_C[i]);
     Serial.print(":");
@@ -176,6 +159,7 @@ void setup()
   for ( int i = 0; i < 20; i++ ){
     jam_D[i] = EEPROM.read(addrJamD + 1 + i);
     menit_D[i] = EEPROM.read(addrMenitD + 1 + i);
+    track_D[i] = EEPROM.read(addrTrackD + 1 + i);
 
     Serial.print(jam_D[i]);
     Serial.print(":");
@@ -186,6 +170,7 @@ void setup()
   for ( int i = 0; i < 20; i++ ){
     jam_E[i] = EEPROM.read(addrJamE + 1 + i);
     menit_E[i] = EEPROM.read(addrMenitE + 1 + i);
+    track_E[i] = EEPROM.read(addrTrackE + 1 + i);
 
     Serial.print(jam_E[i]);
     Serial.print(":");
@@ -196,6 +181,7 @@ void setup()
   for ( int i = 0; i < 20; i++ ){
     jam_F[i] = EEPROM.read(addrJamF + 1 + i);
     menit_F[i] = EEPROM.read(addrMenitF + 1 + i);
+    track_F[i] = EEPROM.read(addrTrackF + 1 + i);
 
     Serial.print(jam_F[i]);
     Serial.print(":");
@@ -1130,14 +1116,14 @@ void tampil_waktu()
 
 void tampil_status()
 {
-  String kode = label_kode_jadwal[kode_jadwal[hari]];
+  char kode = label_kode_jadwal[kode_jadwal[hari]];
   if ( kode == "A" ) {
     for ( int i = 0; i < 20; i++ ){
       jam_jadwal[i] = jam_A[i];
       menit_jadwal[i] = menit_A[i];
       nada[i] = track_A[i];
     }
-  } else if ( kode == "B" ) {
+  } else if ( kode == 'B' ) {
     for ( int i = 0; i < 20; i++ ){
       jam_jadwal[i] = jam_B[i];
       menit_jadwal[i] = menit_B[i];
@@ -1169,9 +1155,9 @@ void tampil_status()
     }
   } else {
     for ( int i = 0; i < 20; i++ ){
-      jam_jadwal[i] = jam_A[i];
-      menit_jadwal[i] = menit_A[i];
-      nada[i] = track_A[i];
+      jam_jadwal[i] = 0;
+      menit_jadwal[i] = 0;
+      nada[i] = 0;
     }
   }
 
@@ -1188,8 +1174,16 @@ void tampil_status()
   }
   lcd.print("  ");
 
+  if ( kode == 'O' ) {
+    lcd.setCursor(0,1);
+    lcd.print("OFF   ");
+  }
+
   for (int i = 0; i < arraySize; i++) {
-    if ( jam < jam_jadwal[i] || jam <= jam_jadwal[i] && menit < menit_jadwal[i] ) {
+    if ( jam == 0 ) {
+
+      break;
+    } else if ( jam < jam_jadwal[i] || jam <= jam_jadwal[i] && menit < menit_jadwal[i] ) {
       tanda = "->";
       jam_pelajaran = i + 1;
 
