@@ -320,18 +320,18 @@ void countdownAktif()
       
     }
 
-    lcd.setCursor(0,1);
-    lcd.print("       ");
-    lcd.print(0);
-    lcd.print("    ");
-    display.showNumberDec(0);
-    delay(1000);
+  lcd.setCursor(0,1);
+  lcd.print("       ");
+  lcd.print(0);
+  lcd.print("    ");
+  display.showNumberDec(0);
+  // delay(1000);
     
 }
 
 void changeLights()
 {
-
+  kirimData(40);
   mp3_play(trackStop);
 
   digitalWrite(carGreen,LOW);

@@ -2,9 +2,13 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 #include <Wire.h>
+#include <SoftwareSerial.h>
+#include <DFPlayer_Mini_Mp3.h>
 
 #define MIN 0
 #define MAX 1
+
+SoftwareSerial mp3(0, 1); // RX, TX
 
 RF24 radio(9, 10); // CE, CSN
 
@@ -42,6 +46,11 @@ int kuning = 1;
 int sentMessage[1];
 int dataMasuk[1] = {0};
 
+//modul mp3
+byte volume = 30;
+byte trackMulai = 2;
+byte trackStop = 30;
+
 //speaker
 int length = 2; // the number of notes
 char notes[] = "bg"; // a space represents a rest
@@ -68,8 +77,19 @@ void setup() {
 //  else if (digitalRead(alamatDua) == 1) {address = 223;}
   minMaxState = digitalRead(switchMinMax);
   
-  Serial.begin(9600);
-  
+//  Serial.begin(9600);
+
+  mp3.begin(9600);
+  while (!mp3) {
+     // wait for serial port to connect.
+  }
+  mp3_set_serial(mp3);
+  delay(10);
+  mp3_reset();
+  delay(1000);
+  mp3_set_volume(volume);
+  delay(10);
+   
   mode_receive();
 }
 
@@ -365,6 +385,10 @@ void tombol_ditekan()
         // suara ketika pedestrian sisa 5 detik
         Serial.println("play Suara hijau akhir");
         suara_hijau_akhir();
+      break;
+      case 40 :
+        // ketika all Red kendaraan stop
+        mp3_play(trackStop);
       break;
       default:
         curMillis = millis();

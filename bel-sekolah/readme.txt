@@ -4,7 +4,7 @@ BEL SEKOLAH OTOMATIS
 	Dalam 1 hari maksimal menyimpan 20 perubahan jam pelajaran meliputi: jam masuk/upacara/istirahat/pergantian jam pelajaran/pulang. (suara bel dapat disesuaikan pada masing-masing pergantian jam)
 	File suara yang bisa diatur sesuai kebutuhan dan disimpan pada kartu memori microSD dengan format mp3.
 
-VARIABEL
+#VARIABEL#
 HARI 	: berisi nama hari (MINGGU, SENIN, SELASA, RABU, KAMIS, JUMAT, SABTU)
 TANGGAL 	: format dd/mm/yyyy (17/06/2020)
 WAKTU	: format hh:mm (07:00)
@@ -14,7 +14,7 @@ NADA	: nomor track yang diputar pada saat jam pelajaran tertentu (1 sampai 30)
 TRACK	: nomor track yang sedang diputar saat tes suara(1 sampai 30)
 VOL	: besar volume suara (0 sampai 30)
 
- 
+
 A.	PENGATURAN AWAL
 
 •	Atur file suara pada kartu memori microSD dengan Komputer(PC), maksimal 30 macam file suara yang berbeda; Buat folder dengan nama mp3 kemudian simpan file suara ke dalam foldel mp3 dengan nama file 0001-0030 (contoh: 0002.mp3 / 0010.mp3 / 0024.mp3)
@@ -25,7 +25,7 @@ A.	PENGATURAN AWAL
 	sesuaikan masing-masing hari dengan kode jadwal yang telah di buat (misal hari SENIN dengan kode A; SELASA-KAMIS dengan kode B; JUMAT dengan kode C)
 
 
- 
+
 B.	TAMPILAN BERANDA
 
 A.	Tampilan Hari
@@ -49,7 +49,7 @@ Tekan tombol ‘A’ untuk kembali ke mode Bel Otomatis atau Beranda.
 
 
 
- 
+
 D.	MENU PENGATURAN
 Masuk Menu Pengaturan dengan menekan dan tahan tombol ‘2’ pada tampilan beranda.
 
