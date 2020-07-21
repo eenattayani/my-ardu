@@ -1110,7 +1110,7 @@ void tampil_waktu()
 void tampil_status()
 {
   char kode = label_kode_jadwal[kode_jadwal[hari]];
-  if ( kode == "A" ) {
+  if ( kode == 'A' ) {
     for ( int i = 0; i < 20; i++ ){
       jam_jadwal[i] = jam_A[i];
       menit_jadwal[i] = menit_A[i];
@@ -1122,25 +1122,25 @@ void tampil_status()
       menit_jadwal[i] = menit_B[i];
       nada[i] = track_B[i];
     }
-  } else if ( kode == "C" ) {
+  } else if ( kode == 'C' ) {
     for ( int i = 0; i < 20; i++ ){
       jam_jadwal[i] = jam_C[i];
       menit_jadwal[i] = menit_C[i];
       nada[i] = track_C[i];
     }
-  } else if ( kode == "D" ) {
+  } else if ( kode == 'D' ) {
     for ( int i = 0; i < 20; i++ ){
       jam_jadwal[i] = jam_D[i];
       menit_jadwal[i] = menit_D[i];
       nada[i] = track_D[i];
     }
-  } else if ( kode == "E" ) {
+  } else if ( kode == 'E' ) {
     for ( int i = 0; i < 20; i++ ){
       jam_jadwal[i] = jam_E[i];
       menit_jadwal[i] = menit_E[i];
       nada[i] = track_E[i];
     }
-  } else if ( kode == "F" ) {
+  } else if ( kode == 'F' ) {
     for ( int i = 0; i < 20; i++ ){
       jam_jadwal[i] = jam_F[i];
       menit_jadwal[i] = menit_F[i];
