@@ -1,8 +1,10 @@
 PELICAN CROSSING - MANUAL BOOK
 ==============================
 
+Pedestrian Light Controlled Crossing - Zebra cross yang dilengkapi tombol pengatur lalu lintas 
+
 PENGATURAN:
-----------
+-----------
 A. Durasi PELICAN - Durasi penyebrangan orang 
 tombol */# untuk tambah atau kurang durasi waktu penyebarangan
 tombol 'A' untuk batal/kembali

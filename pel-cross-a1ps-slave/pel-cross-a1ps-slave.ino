@@ -13,7 +13,7 @@ SoftwareSerial mp3(0, 1); // RX, TX
 RF24 radio(9, 10); // CE, CSN
 
 const int button = 5;
-const int ledButton =  6;
+const int ledButton =  A5; // desain lama D6/6
 const int speaker = 7;
 
 const int alamatSatu = 2;
