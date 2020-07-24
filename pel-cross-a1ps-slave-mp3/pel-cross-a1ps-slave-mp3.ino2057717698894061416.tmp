@@ -282,12 +282,12 @@ void suara_hijau_awal()
 //    delay(tempo / 1);
 
   mp3_play(trackA);
-  delay(350);
-  mp3_stop();
-  delay(150);
+  delay(400);
+  mp3_pause();
+  delay(100);
   mp3_play(trackB);
-  delay(350);
-  mp3_stop();
+  delay(400);
+  mp3_pause();
 }
 
 void suara_hijau_akhir()
@@ -298,11 +298,11 @@ void suara_hijau_akhir()
 //    delay(tempo / 0.5);
   mp3_play(trackA);
   delay(200);
-  mp3_stop();
+  mp3_pause();
   delay(300);
   mp3_play(trackB);
   delay(200);
-  mp3_stop();
+  mp3_pause();
 }
 
 void tombol_ditekan()

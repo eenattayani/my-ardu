@@ -67,11 +67,14 @@ int durasiAllRed = 3000;
 int durasiKuning = 2000;
 int durasiHijau = 20000;
 int durasiAutoOut = 60;
-byte volume = 20;
-byte trackMulai = 2;
-byte trackStop = 30;
-byte trackA = 4;
-byte trackB = 5;
+
+// modul mp3
+byte volume = 30;
+byte trackMulai = 2;  // ketika modul pelican menyala
+byte trackStop = 30;  // track kendaraan berhenti
+byte trackCD = 31;    // track waktu tunggu
+byte trackA = 29;     // track pedestrian
+byte trackB = 23;     // track pedestrian
 
 bool minMaxState = MIN;
 unsigned int count = 0;
@@ -95,9 +98,10 @@ unsigned long changeTime;
 char tombol;
 int statusTombol = 1; // keypad
 
+//speaker
 int length = 2; // the number of notes
 char notes[] = "bg"; // a space represents a rest
-int beats[] = { 1, 1};
+int beats[] = {1, 1};
 int tempo = 100;
 
 
@@ -317,16 +321,14 @@ void countdownAktif()
       lcd.print(x);
       lcd.print("    ");
       display.showNumberDec(x);
-      
-      kirimData(31);
-      
+
       // playNote(notes[1], 200);
       // delay(tempo / 1);
-      mp3_play(trackB);
-      delay(tempo);
-      mp3_stop();
-      delay(500);
+
+      kirimData(31);
       
+      mp3_play(trackCD);
+      delay(1000);
     }
 
     lcd.setCursor(0,1);
@@ -340,12 +342,13 @@ void countdownAktif()
 
 void changeLights()
 {
-
-  mp3_play(trackStop);
-
   digitalWrite(carGreen,LOW);
   digitalWrite(carYellow,HIGH);
+  
+  mp3_play(trackStop);
+  
   kirimData(12);
+  
   lcd.setCursor(0,1);
   lcd.print("Kendaraan STOP..");
   delay(durasiKuning);
@@ -374,12 +377,15 @@ void changeLights()
     //   delay(tempo / 1);
     // playNote(notes[1], 200);
     //   delay(tempo / 1);
+    
     mp3_play(trackA);
-    delay(tempo);
+    delay(350);
     mp3_stop();
+    delay(150);
     mp3_play(trackB);
-    delay(tempo);
+    delay(350);
     mp3_stop();
+    delay(150);
   }
   
   //flashing lampu hijau penyebrangan ; status = off
@@ -397,11 +403,13 @@ void changeLights()
     //   delay(tempo / 0.5);
 
     mp3_play(trackA);
-    delay(tempo / 0.5);
-    mp3_stop();
+    delay(200);
+    mp3_pause();
+    delay(300);
     mp3_play(trackB);
-    delay(tempo / 0.5);
-    mp3_stop();
+    delay(200);
+    mp3_pause();
+    delay(300);
   }
 
   digitalWrite(pedGreen,LOW);
