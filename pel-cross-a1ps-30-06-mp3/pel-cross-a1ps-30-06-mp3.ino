@@ -21,7 +21,7 @@
 #define mp3 Serial1 
 
 TM1637Display display(CLK, DIO);
-LiquidCrystal_I2C lcd(0x27, 20, 4);  //0x27 0x3F  // Mega(SDA, SCL) = 20, 21 
+LiquidCrystal_I2C lcd(0x27, 16, 2);  //0x27 0x3F  // Mega(SDA, SCL) = 20, 21 
 
 RF24 radio(48,49); // CE, CSN
 
@@ -171,6 +171,8 @@ void setup()
   keypad.setHoldTime(500);
   
   display.setBrightness(0x0f);
+  
+//  lcd.setBacklight(128);
 
   mp3_play(trackMulai);
 
@@ -251,11 +253,7 @@ void loop()
 void tampilanAwal() 
 {
   lcd.setCursor(0,0);
-  lcd.print("Pelican Cross 2020");
-  lcd.setCursor(0,1);
-  lcd.print("     Simpang ");
-  lcd.setCursor(0,2);
-  lcd.print("Pangeran Nata Kusuma");
+  lcd.print("Pelican Cross...");
 }
 
 void tombolDitekan() 
@@ -273,7 +271,7 @@ void tombolDitekan()
     lcd.print("Tombol ditekan  ");
     lcd.setCursor(0,1);
     lcd.print("Silahkan Tunggu..");
-    delay(3000);
+    delay(1000);
 
     countdownAktif();   
     changeLights();
@@ -385,7 +383,7 @@ void changeLights()
     mp3_play(trackB);
     delay(350);
     mp3_stop();
-    delay(150);
+    delay(150); // delay kirim pas 1 detik delay 1000
   }
   
   //flashing lampu hijau penyebrangan ; status = off
@@ -409,7 +407,7 @@ void changeLights()
     mp3_play(trackB);
     delay(200);
     mp3_pause();
-    delay(300);
+    delay(300); // total delay 1000 = 1 detik
   }
 
   digitalWrite(pedGreen,LOW);

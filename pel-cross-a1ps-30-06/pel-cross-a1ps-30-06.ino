@@ -67,6 +67,8 @@ int durasiAllRed = 3000;
 int durasiKuning = 2000;
 int durasiHijau = 20000;
 int durasiAutoOut = 60;
+
+//modul mp3
 byte volume = 30;
 byte trackMulai = 2;
 byte trackStop = 30;
@@ -165,6 +167,8 @@ void setup()
   keypad.setHoldTime(500);
   
   display.setBrightness(0x0f);
+
+  //  lcd.setBacklight(128);
 
   mp3_play(trackMulai);
 
