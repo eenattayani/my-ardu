@@ -195,7 +195,10 @@ void loop()
   buttonState = digitalRead(button);
    
   if ( buttonState == HIGH ) {
-    tombolDitekan();
+    delay(100);
+    if ( buttonState == HIGH ) {
+      tombolDitekan();
+    }
   } else {
 
     if ( terimaData() == 1 ) {

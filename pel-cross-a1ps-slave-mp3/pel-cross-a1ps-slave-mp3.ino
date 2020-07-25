@@ -102,16 +102,18 @@ void loop() {
 //  Serial.println(buttonState);
 
   if ( buttonState == HIGH ) {
+    delay(100);
+    if ( buttonState == HIGH ) {
+      tombolLED_on();
+      mode_transmit();
   
-    tombolLED_on();
-    mode_transmit();
-
-    kirim_data(1);
-    delay(300);
-
-    mode_receive();
-
-    tombol_ditekan();
+      kirim_data(1);
+      delay(300);
+  
+      mode_receive();
+  
+      tombol_ditekan();
+    }
   } 
 
   if ( terima_data() != 0 && dataMasuk[0] != 1000 ) {
