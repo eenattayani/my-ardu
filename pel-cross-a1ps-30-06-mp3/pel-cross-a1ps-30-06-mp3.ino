@@ -11,34 +11,40 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 
-// modul 7 Segmen 
-#define CLK 32 
+// modul 7 Segmen
+#define CLK 32
 #define DIO 34
 
 #define MIN 0
 #define MAX 1
 
-#define mp3 Serial1 
+#define mp3 Serial1
 
 TM1637Display display(CLK, DIO);
-LiquidCrystal_I2C lcd(0x27, 16, 2);  //0x27 0x3F  // Mega(SDA, SCL) = 20, 21 
+LiquidCrystal_I2C lcd(0x27, 16, 2); //0x27 0x3F  // Mega(SDA, SCL) = 20, 21
 
-RF24 radio(48,49); // CE, CSN
+RF24 radio(48, 49); // CE, CSN
 
 const byte ROWS = 4;
 const byte COLS = 4;
 
 char keys[ROWS][COLS] = {
-  {'d','#','0','*'},
-  {'c','9','8','7'},
-  {'b','6','5','4'},
-  {'a','3','2','1'}
-};
+    {'1', '4', '7', '*'},
+    {'2', '5', '8', '0'},
+    {'3', '6', '9', '#'},
+    {'a', 'b', 'c', 'd'}};
 
-byte rowPins[ROWS] = {37,35,33,31};
-byte colPins[COLS] = {29,27,25,23};
+// char keys[ROWS][COLS] = {
+//   {'d','#','0','*'},
+//   {'c','9','8','7'},
+//   {'b','6','5','4'},
+//   {'a','3','2','1'}
+// };
 
-Keypad keypad = Keypad(makeKeymap(keys),rowPins,colPins,ROWS,COLS);
+byte rowPins[ROWS] = {37, 35, 33, 31};
+byte colPins[COLS] = {29, 27, 25, 23};
+
+Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
 
 const int addrPelican = 0;
 const int addrTunggu = 1;
@@ -56,7 +62,7 @@ const int pedRed = 10;
 const int pedGreen = 9;
 const int carRed = 13;
 const int carYellow = 12;
-const int carGreen =  11;
+const int carGreen = 11;
 
 byte address = 225;
 
@@ -70,11 +76,11 @@ int durasiAutoOut = 60;
 
 // modul mp3
 byte volume = 30;
-byte trackMulai = 2;  // ketika modul pelican menyala
-byte trackStop = 30;  // track kendaraan berhenti
-byte trackCD = 31;    // track waktu tunggu
-byte trackA = 29;     // track pedestrian
-byte trackB = 23;     // track pedestrian
+byte trackMulai = 2; // ketika modul pelican menyala
+byte trackStop = 30; // track kendaraan berhenti
+byte trackCD = 31;   // track waktu tunggu
+byte trackA = 29;    // track pedestrian
+byte trackB = 23;    // track pedestrian
 
 bool minMaxState = MIN;
 unsigned int count = 0;
@@ -99,88 +105,99 @@ char tombol;
 int statusTombol = 1; // keypad
 
 //speaker
-int length = 2; // the number of notes
+int length = 2;      // the number of notes
 char notes[] = "bg"; // a space represents a rest
 int beats[] = {1, 1};
 int tempo = 100;
 
-
-
-void setup() 
+void setup()
 {
   pinMode(button, INPUT);
   pinMode(speaker, OUTPUT);
   pinMode(alamatSatu, INPUT);
-//  pinMode(alamatDua, INPUT);
+  //  pinMode(alamatDua, INPUT);
   pinMode(switchMinMax, INPUT);
   pinMode(pedRed, OUTPUT);
-  pinMode(pedGreen , OUTPUT);
-  pinMode(carRed , OUTPUT);
-  pinMode(carYellow , OUTPUT);
-  pinMode(carGreen , OUTPUT);
+  pinMode(pedGreen, OUTPUT);
+  pinMode(carRed, OUTPUT);
+  pinMode(carYellow, OUTPUT);
+  pinMode(carGreen, OUTPUT);
   pinMode(ledButton, OUTPUT);
   pinMode(button, INPUT);
-  
+
   digitalWrite(button, LOW);
 
-  digitalWrite(carYellow,HIGH);
+  digitalWrite(carYellow, HIGH);
 
-  if (digitalRead(alamatSatu) == 1) {address = 224;}
-//  else if (digitalRead(alamatDua) == 1) {address = 223;}
+  if (digitalRead(alamatSatu) == 1)
+  {
+    address = 224;
+  }
+  //  else if (digitalRead(alamatDua) == 1) {address = 223;}
   minMaxState = digitalRead(switchMinMax);
-  
 
   durPelican = EEPROM.read(addrPelican);
   durTunggu = EEPROM.read(addrTunggu);
   durJeda = EEPROM.read(addrJeda);
 
-   Serial.begin(9600);
-   while (!Serial) {
-     // wait for serial port to connect. Needed for native USB port only
-   }
+  Serial.begin(9600);
+  while (!Serial)
+  {
+    // wait for serial port to connect. Needed for native USB port only
+  }
 
-   mp3.begin(9600);
-   while (!mp3) {
-     // wait for serial port to connect.
-   }
-   mp3_set_serial(mp3);
-   delay(10);
-   mp3_reset();
-   delay(1000);
-   mp3_set_volume(volume);
-   delay(10);
+  mp3.begin(9600);
+  while (!mp3)
+  {
+    // wait for serial port to connect.
+  }
+  mp3_set_serial(mp3);
+  delay(10);
+  mp3_reset();
+  delay(1000);
+  mp3_set_volume(volume);
+  delay(10);
 
-  if(durPelican > 200) {durPelican = 20;}
-  if(durTunggu > 200) {durTunggu = 20;}
-  if(durJeda > 200) {durJeda = 20;}
-  
+  if (durPelican > 200)
+  {
+    durPelican = 20;
+  }
+  if (durTunggu > 200)
+  {
+    durTunggu = 20;
+  }
+  if (durJeda > 200)
+  {
+    durJeda = 20;
+  }
+
   lcd.begin();
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   lcd.print("dur pelican: ");
-  lcd.setCursor(13,0);
+  lcd.setCursor(13, 0);
   lcd.print(durPelican);
-  lcd.setCursor(0,1);
+  lcd.setCursor(0, 1);
   lcd.print("dur tunggu :  ");
-  lcd.setCursor(13,1);
+  lcd.setCursor(13, 1);
   lcd.print(durTunggu);
-  lcd.setCursor(0,2);
+  lcd.setCursor(0, 2);
   lcd.print("dur jeda   :");
-  lcd.setCursor(13,2);
+  lcd.setCursor(13, 2);
   lcd.print(durJeda);
-  
+
   keypad.setHoldTime(500);
-  
+
   display.setBrightness(0x0f);
-  
-//  lcd.setBacklight(128);
+
+  //  lcd.setBacklight(128);
 
   mp3_play(trackMulai);
 
   modeTransmit();
   delay(500);
   kirimData(1000);
-  delay(500);  
-  
+  delay(500);
+
   modeReceive();
   delay(1000);
 
@@ -193,16 +210,21 @@ void setup()
 void loop()
 {
   buttonState = digitalRead(button);
-   
-  if ( buttonState == HIGH ) {
+
+  if (buttonState == HIGH)
+  {
     delay(100);
     buttonState = digitalRead(button);
-    if ( buttonState == HIGH ) {
+    if (buttonState == HIGH)
+    {
       tombolDitekan();
     }
-  } else {
+  }
+  else
+  {
 
-    if ( terimaData() == 1 ) {
+    if (terimaData() == 1)
+    {
       tombolDitekan();
     }
 
@@ -211,175 +233,176 @@ void loop()
 
   curMillis = millis();
 
-  if ( curMillis - prevMillis_1 > interval_1 ) {
-      hitMillis = hitMillis + 1;
-      prevMillis_1 = curMillis;
-    }
-  
-  if ( hitMillis > durasiAutoOut ) {
-        lcd.noBacklight();
-        hitMillis = 0;
-    }
+  if (curMillis - prevMillis_1 > interval_1)
+  {
+    hitMillis = hitMillis + 1;
+    prevMillis_1 = curMillis;
+  }
 
-  if ( curMillis - prevMillis_2 > interval_2 ) {
+  if (hitMillis > durasiAutoOut)
+  {
+    lcd.noBacklight();
+    hitMillis = 0;
+  }
+
+  if (curMillis - prevMillis_2 > interval_2)
+  {
     kuning_flashing();
     prevMillis_2 = curMillis;
   }
 
-  
-  
   tombol = keypad.getKey();
-  if ( tombol != NO_KEY ) {
+  if (tombol != NO_KEY)
+  {
     hitMillis = 0;
     lcd.backlight();
-    while( millis() - 1000 < curMillis ){
+    while (millis() - 1000 < curMillis)
+    {
       keypad.getKey();
       holdKeyState = keypad.getState();
     }
 
-    if ( holdKeyState == 2 ) {
-        digitalWrite(carYellow,LOW);
-        menuPengaturan();
-        tombol = "";
-      }
+    if (holdKeyState == 2)
+    {
+      digitalWrite(carYellow, LOW);
+      menuPengaturan();
+      tombol = "";
+    }
   }
-   
 }
 
 //********************************************************************
 
-
-
-
-
-
 //******FUNGSI*****************
-void tampilanAwal() 
+void tampilanAwal()
 {
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   lcd.print("Pelican Cross...");
 }
 
-void tombolDitekan() 
+void tombolDitekan()
 {
-    digitalWrite(ledButton, HIGH);
-    modeTransmit();
-    delay(1000);
+  digitalWrite(ledButton, HIGH);
+  modeTransmit();
+  delay(1000);
 
-    kirimData(100);
+  kirimData(100);
 
-    hitMillis = 0;
-    lcd.clear();
-    lcd.backlight();
-    lcd.setCursor(0,0);
-    lcd.print("Tombol ditekan  ");
-    lcd.setCursor(0,1);
-    lcd.print("Silahkan Tunggu..");
-    delay(1000);
+  hitMillis = 0;
+  lcd.clear();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("Tombol ditekan  ");
+  lcd.setCursor(0, 1);
+  lcd.print("Silahkan Tunggu..");
+  delay(1000);
 
-    countdownAktif();   
-    changeLights();
+  countdownAktif();
+  changeLights();
 
-    modeReceive();
-    digitalWrite(ledButton, LOW);
+  modeReceive();
+  digitalWrite(ledButton, LOW);
 }
 
 void kuning_flashing()
 {
-  if ( kuning == 0 ) {
-    digitalWrite(carYellow,LOW);
+  if (kuning == 0)
+  {
+    digitalWrite(carYellow, LOW);
     kuning = 1;
-    lcd.setCursor(0,3);
+    lcd.setCursor(0, 3);
     lcd.print("            ");
 
     Serial.print("alamat: ");
     Serial.println(address);
     Serial.print("min max state: ");
     Serial.println(minMaxState);
-  } 
-  else {
-    digitalWrite(carYellow,HIGH);
+  }
+  else
+  {
+    digitalWrite(carYellow, HIGH);
     kuning = 0;
-    lcd.setCursor(0,3);
+    lcd.setCursor(0, 3);
     lcd.print("Ready...    ");
   }
 }
 
 void countdownAktif()
 {
-  digitalWrite(carYellow,LOW);
-  digitalWrite(carGreen,HIGH);
-  digitalWrite(pedRed,HIGH);
+  digitalWrite(carYellow, LOW);
+  digitalWrite(carGreen, HIGH);
+  digitalWrite(pedRed, HIGH);
   kirimData(13);
 
   lcd.clear();
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   lcd.print("siap menyebrang");
-  
-    //counterdown aktif
-    for ( int x = durTunggu; x > 0; x-- ) {  
-      lcd.setCursor(0,1);
-      lcd.print("       ");
-      lcd.print(x);
-      lcd.print("    ");
-      display.showNumberDec(x);
 
-      // playNote(notes[1], 200);
-      // delay(tempo / 1);
-
-      kirimData(31);
-      
-      mp3_play(trackCD);
-      delay(1000);
-    }
-
-    lcd.setCursor(0,1);
+  //counterdown aktif
+  for (int x = durTunggu; x > 0; x--)
+  {
+    lcd.setCursor(0, 1);
     lcd.print("       ");
-    lcd.print(0);
+    lcd.print(x);
     lcd.print("    ");
-    display.showNumberDec(0);
+    display.showNumberDec(x);
+
+    // playNote(notes[1], 200);
+    // delay(tempo / 1);
+
+    kirimData(31);
+
+    mp3_play(trackCD);
     delay(1000);
-    
+  }
+
+  lcd.setCursor(0, 1);
+  lcd.print("       ");
+  lcd.print(0);
+  lcd.print("    ");
+  display.showNumberDec(0);
+  delay(1000);
 }
 
 void changeLights()
 {
-  digitalWrite(carGreen,LOW);
-  digitalWrite(carYellow,HIGH);
-  
+  digitalWrite(carGreen, LOW);
+  digitalWrite(carYellow, HIGH);
+
   mp3_play(trackStop);
-  
+
   kirimData(12);
-  
-  lcd.setCursor(0,1);
+
+  lcd.setCursor(0, 1);
   lcd.print("Kendaraan STOP..");
   delay(durasiKuning);
 
-  digitalWrite(carYellow,LOW);
-  digitalWrite(carRed,HIGH);
+  digitalWrite(carYellow, LOW);
+  digitalWrite(carRed, HIGH);
   kirimData(11);
   delay(durasiAllRed);
-  
-  lcd.setCursor(0,0);
+
+  lcd.setCursor(0, 0);
   lcd.print("Pedestrian Jalan");
 
-  digitalWrite(pedRed,LOW);
-  digitalWrite(pedGreen,HIGH);
+  digitalWrite(pedRed, LOW);
+  digitalWrite(pedGreen, HIGH);
   kirimData(23);
 
-  for ( int x = durPelican; x >= 6; x-- ) {
-    lcd.setCursor(0,1);
+  for (int x = durPelican; x >= 6; x--)
+  {
+    lcd.setCursor(0, 1);
     lcd.print("       ");
     lcd.print(x);
     lcd.print("       ");
     display.showNumberDec(x);
-    
+
     kirimData(32);
     // playNote(notes[0], 200);
     //   delay(tempo / 1);
     // playNote(notes[1], 200);
     //   delay(tempo / 1);
-    
+
     mp3_play(trackA);
     delay(350);
     mp3_stop();
@@ -387,17 +410,18 @@ void changeLights()
     mp3_play(trackB);
     delay(350);
     mp3_stop();
-    delay(150); // delay kirim pas 1 detik delay 1000
+    delay(100); // delay kirim pas 1 detik delay 1000 - 50
   }
-  
+
   //flashing lampu hijau penyebrangan ; status = off
-  for ( int x = 5; x >= 0; x-- ) {
-    lcd.setCursor(0,1);
+  for (int x = 5; x >= 1; x--)
+  {
+    lcd.setCursor(0, 1);
     lcd.print("       ");
     lcd.print(x);
     lcd.print("       ");
     display.showNumberDec(x);
-    
+
     kirimData(33);
     // playNote(notes[0], 100);
     //   delay(tempo / 0.5);
@@ -411,32 +435,33 @@ void changeLights()
     mp3_play(trackB);
     delay(200);
     mp3_pause();
-    delay(300); // total delay 1000 = 1 detik
+    delay(250); // total delay 1000 - 50 (= 1 detik)
   }
 
-  digitalWrite(pedGreen,LOW);
-  digitalWrite(pedRed,HIGH);
+  digitalWrite(pedGreen, LOW);
+  digitalWrite(pedRed, HIGH);
   kirimData(21);
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   lcd.print("Pedestrian STOP  ");
-  lcd.setCursor(0,1);
+  lcd.setCursor(0, 1);
   lcd.print("                ");
   delay(durasiAllRed);
 
-  digitalWrite(carYellow,HIGH);
+  digitalWrite(carYellow, HIGH);
   kirimData(14);
-  lcd.setCursor(0,1);
+  lcd.setCursor(0, 1);
   lcd.print("Kendaraan SIAP..");
   delay(durasiKuning);
 
-  digitalWrite(carRed,LOW);
-  digitalWrite(carYellow,LOW);
-  digitalWrite(carGreen,HIGH);
+  digitalWrite(carRed, LOW);
+  digitalWrite(carYellow, LOW);
+  digitalWrite(carGreen, HIGH);
   kirimData(13);
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   lcd.print("Kendaraan Jalan  ");
-  for ( int x = durJeda; x >= 0; x-- ) {
-    lcd.setCursor(0,1);
+  for (int x = durJeda; x >= 0; x--)
+  {
+    lcd.setCursor(0, 1);
     lcd.print("       ");
     lcd.print(x);
     lcd.print("       ");
@@ -445,21 +470,21 @@ void changeLights()
 
     kirimData(13);
   }
-  
 
-  digitalWrite(carGreen,LOW);
-  digitalWrite(pedRed,LOW);
+  digitalWrite(carGreen, LOW);
+  digitalWrite(pedRed, LOW);
   kirimData(1000);
-  
+
   tampilanAwal();
-  
+
   changeTime = millis();
 }
 
 //*********Buzzer*******
-void playTone(int tone, int duration) 
+void playTone(int tone, int duration)
 {
-  for ( long i = 0; i < duration * 1000L; i += tone * 2 ) {
+  for (long i = 0; i < duration * 1000L; i += tone * 2)
+  {
     digitalWrite(speaker, HIGH);
     delayMicroseconds(tone);
     digitalWrite(speaker, LOW);
@@ -467,14 +492,16 @@ void playTone(int tone, int duration)
   }
 }
 
-void playNote(char note, int duration) 
+void playNote(char note, int duration)
 {
-  char names[] = { 'c', 'd', 'e', 'f', 'g', 'a', 'b', 'C' };
-  int tones[] = { 1915, 1700, 1519, 1432, 1275, 1136, 1014, 956 };
+  char names[] = {'c', 'd', 'e', 'f', 'g', 'a', 'b', 'C'};
+  int tones[] = {1915, 1700, 1519, 1432, 1275, 1136, 1014, 956};
 
   // play the tone corresponding to the note name
-  for ( int i = 0; i < 8; i++ ) {
-    if ( names[i] == note ) {
+  for (int i = 0; i < 8; i++)
+  {
+    if (names[i] == note)
+    {
       playTone(tones[i], duration);
       delay(200);
     }
@@ -483,10 +510,14 @@ void playNote(char note, int duration)
 
 void speaker_aktif()
 {
-  for ( int i = 0; i < length; i++ ) {
-    if ( notes[i] == ' ' ) {
+  for (int i = 0; i < length; i++)
+  {
+    if (notes[i] == ' ')
+    {
       delay(beats[i] * tempo); // rest
-    } else {
+    }
+    else
+    {
       //playNote(notes[i], beats[i] * tempo);
       playNote(notes[i], 100);
     }
@@ -496,26 +527,24 @@ void speaker_aktif()
   }
 }
 
-
-
-
 //********Menu Pengaturan*******
 void tampilMenu()
 {
   lcd.clear();
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   lcd.print("1.PELICAN");
-  lcd.setCursor(0,1);
+  lcd.setCursor(0, 1);
   lcd.print("2.TUNGGU  3.JEDA");
 }
 
-void masukMenu(String namaMenu = "menu") 
+void masukMenu(String namaMenu = "menu")
 {
   lcd.clear();
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   lcd.print(namaMenu);
-  lcd.setCursor(6,1);
-  for(int x=0; x<3; x++){  
+  lcd.setCursor(6, 1);
+  for (int x = 0; x < 3; x++)
+  {
     lcd.print(".");
     delay(700);
   }
@@ -524,100 +553,106 @@ void masukMenu(String namaMenu = "menu")
 void menuPengaturan()
 {
   hitMillis = 0;
-  
+
   masukMenu("Menu Pengaturan");
-  tampilMenu();  
-  
+  tampilMenu();
+
   do
   {
     tombol = keypad.getKey();
-    if ( tombol == 'a' ) {
+    if (tombol == 'a')
+    {
       statusTombol = 1;
       lcd.clear();
-      lcd.setCursor(0,0);
+      lcd.setCursor(0, 0);
       lcd.print("   Kembali...");
     }
-    else if ( tombol == 'b' ) {
+    else if (tombol == 'b')
+    {
       statusTombol = 1;
       lcd.clear();
-      lcd.setCursor(0,0);
+      lcd.setCursor(0, 0);
       lcd.print("    Kembali...");
     }
-    else if ( tombol == '1' ) {
-        statusTombol = 0;
-        aturPelican();
-        statusTombol = 0;
-        tampilMenu();
+    else if (tombol == '1')
+    {
+      statusTombol = 0;
+      aturPelican();
+      statusTombol = 0;
+      tampilMenu();
     }
-    else if ( tombol == '2' ) {
-        statusTombol = 0;
-        aturTunggu();
-        statusTombol = 0;
-        tampilMenu();
+    else if (tombol == '2')
+    {
+      statusTombol = 0;
+      aturTunggu();
+      statusTombol = 0;
+      tampilMenu();
     }
-    else if ( tombol == '3' ) {
-        statusTombol = 0;
-        aturJeda();
-        statusTombol = 0;
-        tampilMenu();
+    else if (tombol == '3')
+    {
+      statusTombol = 0;
+      aturJeda();
+      statusTombol = 0;
+      tampilMenu();
     }
-    else{
-        statusTombol = 0;
+    else
+    {
+      statusTombol = 0;
     }
 
     curMillis = millis();
-    
-    if ( curMillis % 1000 == 0 ) {
+
+    if (curMillis % 1000 == 0)
+    {
       hitMillis = hitMillis + 1;
       holdKeyState = keypad.getState();
-      delay(1);  
+      delay(1);
     }
 
-    if ( hitMillis > durasiAutoOut ) {
+    if (hitMillis > durasiAutoOut)
+    {
       statusTombol = 1;
       hitMillis = 0;
       lcd.clear();
-      lcd.setCursor(0,0);
+      lcd.setCursor(0, 0);
       lcd.print("   Kembali...");
     }
-              
-    if( tombol != NO_KEY ) {
+
+    if (tombol != NO_KEY)
+    {
       hitMillis = 0;
     }
-  }    
-  while( statusTombol != 1 ); 
-  
+  } while (statusTombol != 1);
+
   delay(1500);
   tampilanAwal();
 }
 
-void aturTunggu() 
+void aturTunggu()
 {
   menu = "Tunggu";
 
   durTunggu = menuPengaturanDurasi(durTunggu);
 
-  if ( statusSimpan == true ) {
-    EEPROM.update(addrTunggu,durTunggu);
+  if (statusSimpan == true)
+  {
+    EEPROM.update(addrTunggu, durTunggu);
     statusSimpan = false;
   }
 }
 
-
-
-void aturPelican() 
+void aturPelican()
 {
   menu = "Pelican";
-  
+
   durPelican = menuPengaturanDurasi(durPelican);
 
-  if ( statusSimpan == true ) {
-    EEPROM.update(addrPelican,durPelican);
+  if (statusSimpan == true)
+  {
+    EEPROM.update(addrPelican, durPelican);
     statusSimpan = false;
   }
-  
 }
-
 
 void aturJeda()
 {
@@ -625,105 +660,119 @@ void aturJeda()
 
   durJeda = menuPengaturanDurasi(durJeda);
 
-  if ( statusSimpan == true ) {
-    EEPROM.update(addrJeda,durJeda);
+  if (statusSimpan == true)
+  {
+    EEPROM.update(addrJeda, durJeda);
     statusSimpan = false;
   }
-
 }
 
 int menuPengaturanDurasi(int durasi)
 {
   hitMillis = 0;
-    
+
   lcd.clear();
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   lcd.print("SET");
-  lcd.setCursor(4,0);
+  lcd.setCursor(4, 0);
   lcd.print(menu);
-  lcd.setCursor(13,0);
+  lcd.setCursor(13, 0);
   lcd.print("#:+");
-  lcd.setCursor(13,1);
+  lcd.setCursor(13, 1);
   lcd.print("*:-");
-  lcd.setCursor(0,1);
+  lcd.setCursor(0, 1);
   lcd.print("Durasi = ");
-  lcd.setCursor(9,1);
+  lcd.setCursor(9, 1);
   lcd.print(durasi);
 
-  do{
+  do
+  {
     curMillis = millis();
-    
-    if ( curMillis % 1000 == 0 ) {
+
+    if (curMillis % 1000 == 0)
+    {
       hitMillis = hitMillis + 1;
       delay(1);
     }
-    
+
     tombol = keypad.getKey();
-    if ( tombol == 'a' ) {  
-        statusSimpan = false;                //cancel
-        statusTombol = 1;
-        lcd.clear();
-        lcd.setCursor(0,0);
-        lcd.print("   Cancel...");
-        delay(1000);
-      }
-    else if ( tombol == 'b' ) {                 //simpan
-        statusSimpan = true;
-        statusTombol = 1;
-        lcd.clear();
-        lcd.setCursor(0,0);
-        lcd.print("    Saved...");
-        delay(1000);
+    if (tombol == 'a')
+    {
+      statusSimpan = false; //cancel
+      statusTombol = 1;
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("   Cancel...");
+      delay(1000);
     }
-    else if ( tombol == '#' || tombol == 'c' ) {                 //tambah durasi ++
+    else if (tombol == 'b')
+    { //simpan
+      statusSimpan = true;
+      statusTombol = 1;
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("    Saved...");
+      delay(1000);
+    }
+    else if (tombol == '#' || tombol == 'c')
+    { //tambah durasi ++
       statusTombol = 0;
       durasi += 1;
-      if ( durasi > 120 ) { durasi = 120; }
-      lcd.setCursor(9,1);
+      if (durasi > 120)
+      {
+        durasi = 120;
+      }
+      lcd.setCursor(9, 1);
       lcd.print(durasi);
       lcd.print(" ");
     }
-    else if ( tombol == '*' || tombol == 'd' ) {                  //kurangi durasi --
+    else if (tombol == '*' || tombol == 'd')
+    { //kurangi durasi --
       statusTombol = 0;
       durasi -= 1;
-      if ( durasi < 0 ) { durasi = 0; }
-      lcd.setCursor(9,1);
+      if (durasi < 0)
+      {
+        durasi = 0;
+      }
+      lcd.setCursor(9, 1);
       lcd.print(durasi);
       lcd.print(" ");
     }
-    else {
-        statusTombol = 0;
+    else
+    {
+      statusTombol = 0;
     }
 
-    if ( hitMillis > durasiAutoOut ) {
-        statusTombol = 1;
-        hitMillis = 0;
-        lcd.clear();
-        lcd.setCursor(0,0);
-        lcd.print("   Kembali...");
-        delay(1000);
-     }
-           
-    if ( tombol != NO_KEY ) {
+    if (hitMillis > durasiAutoOut)
+    {
+      statusTombol = 1;
+      hitMillis = 0;
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("   Kembali...");
+      delay(1000);
+    }
+
+    if (tombol != NO_KEY)
+    {
       hitMillis = 0;
     }
-     
-  } while ( statusTombol != 1 );
+
+  } while (statusTombol != 1);
 
   return durasi;
 }
-
-
-
-
 
 void modeTransmit()
 {
   radio.begin();
   radio.openWritingPipe(address);
-  if ( minMaxState == MIN ) {
+  if (minMaxState == MIN)
+  {
     radio.setPALevel(RF24_PA_MIN);
-  } else {
+  }
+  else
+  {
     radio.setPALevel(RF24_PA_MAX);
   }
   radio.stopListening();
@@ -734,40 +783,43 @@ void kirimData(int isiData)
   sentMessage[0] = isiData;
   radio.write(sentMessage, 2);
 
-  count +=1;
+  count += 1;
 }
 
 void modeReceive()
 {
   radio.begin();
   radio.openReadingPipe(0, address);
-  if ( minMaxState == MIN ) {
+  if (minMaxState == MIN)
+  {
     radio.setPALevel(RF24_PA_MIN);
-  } else {
+  }
+  else
+  {
     radio.setPALevel(RF24_PA_MAX);
   }
   radio.startListening();
 }
 
-int terimaData() 
+int terimaData()
 {
-  if ( radio.available() ) {
+  if (radio.available())
+  {
 
     radio.read(dataMasuk, 2);
 
     count += 1;
     lcd.clear();
-    lcd.setCursor(2,3);
+    lcd.setCursor(2, 3);
     lcd.print("received: ");
     lcd.print(dataMasuk[0]);
     lcd.print(" ");
     lcd.print(count);
-    
+
     Serial.print("terima: ");
     Serial.print(dataMasuk[0]);
     Serial.print(" ");
     Serial.println(count);
-    
   }
 
   return dataMasuk[0];

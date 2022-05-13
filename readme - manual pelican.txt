@@ -20,3 +20,11 @@ C. Durasi Jeda - Durasi waktu nyala lampu hijau kendaraan setelah orang selesai 
 tombol */# untuk tambah atau kurang durasi waktu jeda tombol nonaktif
 tombol 'A' untuk batal/kembali
 tombol 'B' untuk simpan
+
+
+INTRUKSI
+========
+1. Tekan tombol untuk bersiap menyebrang hingga lampu tombol menyala
+2. Sebelum menyebrang silahkan tunggu beberapa detik hingga lampu merah isyarat kendaraan menyala
+3. Silahkan menyebrang setelah kendaraan berhenti dan lampu hijau isyarat penyebrangan menyala
+4. Tombol dapat ditekan kembali setelah tombol kembali ke keadaan standby(lampu tombol padam & lampu kuning isyarat kendaraan flashing)

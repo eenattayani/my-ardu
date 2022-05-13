@@ -160,7 +160,7 @@ void setup()
   delay(10);
 
   mulai();
-  // mp3_play(1);
+  mp3_play(1);
   delay(2000);
 }
 
