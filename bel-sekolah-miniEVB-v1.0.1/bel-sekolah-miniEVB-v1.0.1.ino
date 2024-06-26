@@ -114,18 +114,13 @@ byte track = EEPROM.read(addrTrack);
 void setup()
 {
 //   Serial.begin(9600);
-//   while (!Serial)
-//   {
-//     /* code */
-//   }
+  // while (!Serial)
+  // {
+  //   /* code */
+  // }
 
   // Initialize the rtc object
   myRTC.begin();
-
-//  myRTC.setDS1302Time(00,52,10,1,30,4,2024);
-//  myRTC.setDOW(2);
-//  myRTC.setTime(11, 50, 0);
-//  myRTC.setDate(30, 4, 2024);
 
   // KODE JADWAL
   for ( int i = 0; i < 7; i++  ){
@@ -307,8 +302,8 @@ void tes_sound()
     }
   } while (keluar == false);
   
-  EEPROM.update(addrVolume, volume);
-  EEPROM.update(addrTrack, track);
+  EEPROM.write(addrVolume, volume);
+  EEPROM.write(addrTrack, track);
   keluar = false;
 }
 
@@ -366,7 +361,7 @@ void atur_volume(char tombol)
 
   } while (keluar == false);
 
-  EEPROM.update(addrVolume, volume);
+  EEPROM.write(addrVolume, volume);
   keluar = false;
 }
 
@@ -1053,9 +1048,9 @@ void set_jam_ke(int jam_ke, int addr_jam, int addr_menit, int addr_track)
           kembali();
         break;
         case 'B':
-          EEPROM.update(addr_jam + jam_ke, jam_edit);
-          EEPROM.update(addr_menit + jam_ke, menit_edit);
-          EEPROM.update(addr_track + jam_ke, track_edit);
+          EEPROM.write(addr_jam + jam_ke, jam_edit);
+          EEPROM.write(addr_menit + jam_ke, menit_edit);
+          EEPROM.write(addr_track + jam_ke, track_edit);
           simpan();
         break;  
         default:
@@ -1088,7 +1083,6 @@ void baca_waktu()
   jam = t.hour;
   menit =  t.min;
   detik = t.sec;
-
 
   // hari = 1;
   // tanggal = 16;
@@ -1126,28 +1120,6 @@ void tampil_waktu()
   if( detik < 10 ) lcd.print("0");
   lcd.print(detik);
   lcd.print("  ");
-
-  
-//  Serial.print("<");
-//  Serial.print(nama_hari[hari]);
-//  Serial.print("> ");
-//  if( tanggal < 10 ) Serial.print("0");
-//  Serial.print(tanggal);
-//  Serial.print("/");
-//  if( bulan < 10 ) Serial.print("0");
-//  Serial.print(bulan);
-//  Serial.print("/");
-//  Serial.println(tahun);
-//    
-//  if( jam < 10 ) Serial.print("0");
-//  Serial.print(jam);
-//  Serial.print(":");
-//  if( menit < 10 ) Serial.print("0");
-//  Serial.print(menit);
-//  Serial.print(":");
-//  if( detik < 10 ) Serial.print("0");
-//  Serial.print(detik);
-//  Serial.println("  ");
 }
 
 void tampil_status()
@@ -1285,7 +1257,7 @@ void start_counter()
   if ( currentMillis - previousMillis > jeda ) {
     previousMillis = currentMillis;
     counter += 1;
-//     Serial.println(counter);
+    // Serial.println(counter);
     
     if (counter > autoOut) {
       counter = 0;
@@ -1547,7 +1519,7 @@ void set_kode_jadwal(byte hari_ke)
         break;
         case 'B':
           kode_jadwal[hari_ke] = kode_edit;
-          EEPROM.update(addrKodeJadwal + hari_ke + 1, kode_edit);
+          EEPROM.write(addrKodeJadwal + hari_ke + 1, kode_edit);
           simpan();
         break;  
         default:

@@ -158,15 +158,15 @@ void setup()
   mp3_set_volume(volume);
   delay(10);
 
-  if (durPelican > 200)
+  if (durPelican > 120)
   {
     durPelican = 20;
   }
-  if (durTunggu > 200)
+  if (durTunggu > 20)
   {
-    durTunggu = 20;
+    durTunggu = 5;
   }
-  if (durJeda > 200)
+  if (durJeda > 240)
   {
     durJeda = 20;
   }

@@ -11,25 +11,22 @@ void setup(){
   Serial.print("Read float from EEPROM: ");
 
 
-  for (int i = 0 ; i < EEPROM.length() ; i++) {
-//    if (EEPROM.read(i) == 255) {
+  for (int i = 0 ; i < 512 ; i++) {
+    if (EEPROM.read(i) == 255) {
       EEPROM.write(i, 0);      
-//    }
+    }
   }
 
-//  waitms(50);
-
-//    jadwal_aws();
   jadwal_default();
 //  jadwal_sekolah_sambas();
 
     
-   for(int i=0; i< EEPROM.length(); i++){ 
+   for(int i=0; i< 512; i++){ 
     Serial.print("alamat : ");
     Serial.print(i);
     Serial.print(" || value : ");
     Serial.println(EEPROM.read(i));
-    delay(1);
+    delay(10);
    }
 
 }
@@ -37,46 +34,8 @@ void setup(){
 void loop(){
 
   Serial.print("EEPROM lenght: ");
-  Serial.println(EEPROM.length());
+  Serial.println(512);
   delay(1000);
-}
-
-void jadwal_aws()
-{
-   EEPROM.write(0, 14);  
-   EEPROM.write(1, 24);  
-
-   EEPROM.write(81, 6);
-   EEPROM.write(82, 7);
-   EEPROM.write(83, 7); 
-   EEPROM.write(84, 8); 
-   EEPROM.write(85, 8); 
-   
-   EEPROM.write(86, 14); 
-   EEPROM.write(87, 14); 
-   EEPROM.write(88, 16); 
-   EEPROM.write(89, 16); 
-   EEPROM.write(90, 17); 
-
-   EEPROM.write(102, 30); 
-   EEPROM.write(103, 0); 
-   EEPROM.write(104, 30); 
-   EEPROM.write(105, 0); 
-   EEPROM.write(106, 30); 
-   
-   EEPROM.write(107, 0); 
-   EEPROM.write(108, 30); 
-   EEPROM.write(109, 0); 
-   EEPROM.write(110, 30); 
-   EEPROM.write(111, 0); 
-   
-
-   EEPROM.write(452, 1); 
-   EEPROM.write(453, 1); 
-   EEPROM.write(454, 1); 
-   EEPROM.write(455, 1); 
-   EEPROM.write(456, 1); 
-   EEPROM.write(457, 1);
 }
 
 void jadwal_default()

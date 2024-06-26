@@ -32,8 +32,8 @@ bool buttonState = 0;
 bool minMaxState = MIN;
 bool ledState = 0; // status enable tombol penyebrangan
 
-byte counterSinyalLost = 55;
-const byte batasSinyalLost = 60;
+byte counterSinyalLost = 0;
+const byte batasSinyalLost = 4;
 
 
 unsigned int count = 0;
@@ -79,12 +79,13 @@ void setup() {
   if (digitalRead(alamatSatu) == 1) {address = 224;}
 //  else if (digitalRead(alamatDua) == 1) {address = 223;}
   minMaxState = digitalRead(switchMinMax);
-  
+
+// print serial dimatikan karena port digunakan untuk Audio
 //  Serial.begin(9600);
 
   mp3.begin(9600);
   while (!mp3) {
-     // wait for serial port to connect.
+      //wait for serial port to connect.
   }
   mp3_set_serial(mp3);
   delay(10);
@@ -420,10 +421,11 @@ void tombol_ditekan()
         if ( curMillis - prevMillis > interval ) {
           counterSinyalLost = counterSinyalLost + 1;
           prevMillis = curMillis;
-          // Serial.print("counter sinyal lost: ");
-          // Serial.println(counterSinyalLost);
+           Serial.print("counter sinyal lost: ");
+           Serial.println(counterSinyalLost);
 
           if ( counterSinyalLost > batasSinyalLost ) {
+            counterSinyalLost = 0;
             Serial.println("Semua Padam");
       
             digitalWrite(pedRed, LOW);
